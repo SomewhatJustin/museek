@@ -2,7 +2,12 @@ import Foundation
 import Security
 
 struct SessionStore: Sendable {
-    private let service = "app.museek.session"
+    private var service: String {
+        #if DEBUG
+        if UITestTransport.scenario != nil { return "app.museek.session.ui-tests" }
+        #endif
+        return "app.museek.session"
+    }
     private let account = "current"
 
     func load() throws -> AppSession? {

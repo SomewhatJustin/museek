@@ -18,6 +18,12 @@ final class AppModel {
     private let sessionStore = SessionStore()
 
     init() {
+        #if DEBUG
+        if UITestTransport.scenario != nil,
+           ProcessInfo.processInfo.environment["MUSEEK_UI_TEST_RESET_SESSION"] == "1" {
+            try? sessionStore.clear()
+        }
+        #endif
         let restored = try? sessionStore.load()
         session = restored
         offline = OfflineLibrary(session: restored)

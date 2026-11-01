@@ -14,19 +14,9 @@ final class TailnetDiscovery {
     private let joinAction: @MainActor () async throws -> AppSession
 
     init(probe: @escaping @MainActor () async -> Bool = {
-        #if DEBUG
-        if let scenario = ProcessInfo.processInfo.environment["MUSEEK_UI_TEST_SCENARIO"] {
-            return scenario == "unauthorized"
-        }
-        #endif
         do { return try await APIClient(serverURL: TailnetDiscovery.serverURL).detectTailnet() }
         catch { return false }
     }, join: @escaping @MainActor () async throws -> AppSession = {
-        #if DEBUG
-        if ProcessInfo.processInfo.environment["MUSEEK_UI_TEST_SCENARIO"] == "unauthorized" {
-            throw APIError(message: "This Tailscale account is not authorized to join Museek.", statusCode: 403)
-        }
-        #endif
         return try await APIClient(serverURL: TailnetDiscovery.serverURL).joinTailnet(deviceName: UIDevice.current.name)
     }) {
         self.probe = probe

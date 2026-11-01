@@ -1,5 +1,55 @@
 import Foundation
 
+#if DEBUG
+// Replace only HTTP transport: discovery, decoding, AppModel, and Keychain stay real.
+final class UITestTransport: URLProtocol, @unchecked Sendable {
+    static var scenario: String? {
+        let value = ProcessInfo.processInfo.environment["MUSEEK_UI_TEST_SCENARIO"]
+        return ["success", "restore", "unauthorized", "notFound"].contains(value ?? "") ? value : nil
+    }
+
+    static func session() -> URLSession? {
+        guard scenario != nil else { return nil }
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [UITestTransport.self]
+        return URLSession(configuration: config)
+    }
+
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        let status: Int
+        let body: String
+        // Fail closed: never contact the live server or accept an unexpected host/method.
+        switch (request.url?.absoluteString, request.httpMethod, Self.scenario) {
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/server", "GET", "success"),
+             ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/server", "GET", "unauthorized"):
+            status = 200
+            body = #"{"name":"Museek","tailnetJoin":true,"version":1}"#
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tailnet/join", "POST", "success"):
+            status = 201
+            body = #"{"token":"ui-fixture-bearer","recipient":{"id":"ui-fixture-listener","name":"Fixture Listener"}}"#
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tailnet/join", "POST", "unauthorized"):
+            status = 403
+            body = #"{"error":"This Tailscale account is not authorized to join Museek."}"#
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/collections", "GET", let scenario)
+            where (scenario == "success" || scenario == "restore") && request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer":
+            status = 200
+            let name = scenario == "restore" ? "Restored fixture collection" : "Joined fixture collection"
+            body = "{\"collections\":[{\"id\":\"ui-fixture-collection\",\"name\":\"\(name)\",\"trackCount\":1}]}"
+        default:
+            status = 403
+            body = #"{"error":"Unexpected UI fixture request"}"#
+        }
+        let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: nil, headerFields: ["Content-Type": "application/json"])!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: Data(body.utf8))
+        client?.urlProtocolDidFinishLoading(self)
+    }
+    override func stopLoading() {}
+}
+#endif
+
 struct APIError: LocalizedError, Equatable, Sendable {
     let message: String
     let statusCode: Int?
@@ -11,10 +61,14 @@ actor APIClient {
     private let token: String?
     private let session: URLSession
 
-    init(serverURL: String, token: String? = nil, session: URLSession = .shared) throws {
+    init(serverURL: String, token: String? = nil, session: URLSession? = nil) throws {
         self.baseURL = try Self.normalizedURL(serverURL)
         self.token = token
-        self.session = session
+        #if DEBUG
+        self.session = session ?? UITestTransport.session() ?? .shared
+        #else
+        self.session = session ?? .shared
+        #endif
     }
 
     static func normalizedURL(_ input: String) throws -> URL {
