@@ -68,7 +68,7 @@ The server address and pairing code remain available for manual entry if the lin
 
 ## Run the iPhone app
 
-For the manual, main-only GitHub Actions verify/upload workflow, see [TestFlight CI setup](docs/TESTFLIGHT.md).
+Pushes to `main` run the TestFlight test/archive/upload workflow on `macbook-m1-ci`. For setup and manual verification, see [TestFlight CI setup](docs/TESTFLIGHT.md).
 
 Install Xcode and XcodeGen, then:
 

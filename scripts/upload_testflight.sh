@@ -6,7 +6,8 @@ repo_root="$(cd "$script_dir/.." && pwd)"
 app_dir="$repo_root/app"
 export_options="$app_dir/ios/ExportOptions-TestFlight.plist"
 build_name="${BUILD_NAME:-1.0.0}"
-build_number="${BUILD_NUMBER:-$(date -u +%Y%m%d%H%M)}"
+build_number="${BUILD_NUMBER:-$(date -u +%Y%m%d%H%M%S)}"
+simulator_destination="${SIMULATOR_DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 apple_team_id="${APPLE_TEAM_ID:-JSKJUMBXQ3}"
 archive_path="$app_dir/build/ios/archive/Museek-$build_number.xcarchive"
 
@@ -23,7 +24,7 @@ plutil -lint "$export_options" >/dev/null
 
 cd "$app_dir"
 xcodegen generate
-xcodebuild -project Museek.xcodeproj -scheme Museek -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
+xcodebuild -project Museek.xcodeproj -scheme Museek -destination "$simulator_destination" test
 
 authentication_args=(-allowProvisioningUpdates)
 if [[ -n "${ASC_KEY_ID:-}" || -n "${ASC_ISSUER_ID:-}" || -n "${ASC_KEY_PATH:-}" ]]

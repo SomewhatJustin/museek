@@ -1,6 +1,8 @@
 name: TestFlight
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       upload:
@@ -28,7 +30,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: Check out dispatched main commit
+      - name: Check out main commit
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
@@ -40,10 +42,16 @@ jobs:
           xcodebuild -version
           xcodegen --version
       - name: Verify unsigned simulator build (no runtime required)
-        if: ${{ !inputs.upload }}
+        if: ${{ github.event_name == 'workflow_dispatch' && !inputs.upload }}
         run: bash scripts/verify_ios.sh
+      - name: Unlock runner signing keychain
+        if: ${{ github.event_name == 'push' || inputs.upload }}
+        run: |
+          signing_keychain="$HOME/Library/Keychains/museek-ci.keychain-db"
+          security unlock-keychain -p "$(cat "$HOME/.config/museek-ci/keychain-password")" "$signing_keychain"
+          security set-keychain-settings -lut 21600 "$signing_keychain"
       - name: Test, archive and upload
-        if: ${{ inputs.upload }}
+        if: ${{ github.event_name == 'push' || inputs.upload }}
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -51,4 +59,6 @@ jobs:
         run: bash scripts/ci_testflight.sh
       - name: Always remove temporary API key material
         if: ${{ always() }}
-        run: rm -rf -- "$RUNNER_TEMP/museek-asc-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+        run: |
+          rm -rf -- "$RUNNER_TEMP/museek-asc-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          security lock-keychain "$HOME/Library/Keychains/museek-ci.keychain-db"

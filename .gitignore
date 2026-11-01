@@ -22,4 +22,5 @@ app/ios/Flutter/ephemeral/
 *.ipa
 xcuserdata/
 DerivedData/
+__pycache__/
 

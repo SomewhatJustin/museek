@@ -1,26 +1,29 @@
-# Manual TestFlight CI
+# TestFlight CI
 
-`.github/workflows/testflight.yml` runs only through **Actions → TestFlight → Run workflow**, selecting **main**. Other refs are skipped. Leave `upload` unchecked for the default unsigned simulator SDK build of the app and unit tests (`build-for-testing`). This compiles but does not execute tests, boot a simulator, sign, archive, or contact App Store Connect. It requires Xcode's simulator SDK, not an installed simulator runtime.
+Every push to **main** runs `.github/workflows/testflight.yml` on **macbook-m1-ci**: simulator tests, a signed Release archive, and an App Store Connect upload. Uploads are serialized and are not cancelled by subsequent pushes.
 
-Check `upload` only when ready to publish. That invokes the existing `scripts/upload_testflight.sh`: tests on **iPhone 17 Pro**, Release archive, then export/upload with `app/ios/ExportOptions-TestFlight.plist`. A successful submission is not proof Apple has finished processing or made the build available to testers. Build version defaults to 1.0.0 and build number to the UTC minute; avoid duplicate builds within a minute and update the version when needed.
+For a manual run, choose **Actions → TestFlight → Run workflow → main**. Other refs are skipped. Leave `upload` unchecked for an unsigned simulator SDK build of the app and unit tests (`build-for-testing`). This compiles tests without running them or contacting App Store Connect, and requires Xcode's simulator SDK rather than an installed simulator runtime.
+
+Check `upload` to invoke `scripts/upload_testflight.sh`: tests on **iPhone 17 Pro**, Release archive, then export/upload with `app/ios/ExportOptions-TestFlight.plist`. A successful submission is not proof Apple has finished processing or made the build available to testers. Build version defaults to `1.0.0` and build number to the UTC timestamp including seconds. `BUILD_NAME`, `BUILD_NUMBER`, `APPLE_TEAM_ID`, and `SIMULATOR_DESTINATION` can override the script defaults.
 
 ## Runner and environment prerequisites
 
-- Dedicated trusted Apple Silicon Mac runner with labels `self-hosted`, `macOS`, `ARM64`, `museek`. The workflow does not install/register a runner.
+- Dedicated Apple Silicon Mac runner **macbook-m1-ci**, registered with labels `self-hosted`, `macOS`, `ARM64`, `museek`. It runs as user `ci` through a LaunchAgent and must remain logged in and awake.
 - `/Applications/Xcode-27.2.0.app`, accepted license/first-launch components, and Homebrew `xcodegen` in `/opt/homebrew/bin`. `DEVELOPER_DIR` is explicit; system `xcode-select` is not changed.
 - For uploads: an installed compatible iOS simulator runtime and an available **iPhone 17 Pro** simulator, as required by the existing upload script.
-- Create GitHub environment **testflight**, restrict deployment branches to **main**, and enable required reviewers where available. Add environment secrets (repository secrets also resolve):
+- Dedicated default signing keychain at `~/Library/Keychains/museek-ci.keychain-db`, included in the user keychain search list. Its random password is stored only on the runner at `~/.config/museek-ci/keychain-password` with mode `600`, outside the repository and runner workspace. Each release unlocks it; cleanup locks it again.
+- GitHub environment **testflight** is configured to allow deployment only from **main**. Add environment secrets (repository secrets also resolve):
   - `ASC_KEY_ID`: App Store Connect API key ID.
   - `ASC_ISSUER_ID`: issuer UUID.
   - `ASC_PRIVATE_KEY`: complete raw multiline `.p8` private key, not base64 and not a filename.
 - The API key needs appropriate App Store Connect access to upload this app and permission for any automatic provisioning operations needed.
-- Apple Developer team **JSKJUMBXQ3**, bundle ID **app.museek.museekApp**, and a matching App Store Connect app must exist. Install a valid signing certificate **with private key** in the runner user's unlocked keychain and ensure valid provisioning is available (or authorized automatic provisioning). An API key alone does not establish that signing works.
+- Apple Developer team **JSKJUMBXQ3**, bundle ID **app.museek.museekApp**, App Store Connect app **6804269481** (Museek Mixtape Player). Install a valid signing certificate **with private key** in the dedicated keychain and ensure valid provisioning is available (or authorized automatic provisioning). Apple agreements must be current. An API key alone does not establish that signing works.
 
 **Signing and upload have not been verified.** Missing signing identities, profiles, App Store Connect authorization, or simulator runtime will block upload. Verify mode intentionally does not validate these prerequisites.
 
 ## Security and cleanup
 
-This public repository has no pull-request or push trigger in this workflow. Keep the runner restricted to trusted workflows/repositories: other workflows on a shared persistent runner can compromise it. Review changes on main before approving deployment. Checkout credentials are not persisted and token permissions are limited to `contents: read`.
+This public repository's release workflow accepts only pushes to main and manual runs from main; it has no pull-request trigger. Keep write access and other workflows on the persistent runner limited to trusted maintainers. Checkout credentials are not persisted and token permissions are limited to `contents: read`.
 
 Secrets are provided only to the upload step. The private key is written under `RUNNER_TEMP` in a run/attempt-specific directory (directory mode 700, file mode 600), removed by a shell exit trap and an `always()` cleanup step. Hard power loss or forced runner termination can prevent both cleanups; clean stale temporary directories before reusing the machine. Do not enable shell tracing or log key contents. Archives/build outputs remain on the runner; no key or build artifacts are uploaded by this workflow.
 
