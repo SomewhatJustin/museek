@@ -1,0 +1,6 @@
+.git
+*.db
+data
+music
+coverage.out
+

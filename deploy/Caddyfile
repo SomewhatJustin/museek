@@ -1,0 +1,5 @@
+{$MUSEEK_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy museek:8080
+}
+

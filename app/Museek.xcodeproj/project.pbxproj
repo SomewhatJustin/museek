@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		046ABAF578021EBE8F02839C /* ArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0222856A08EA5FA61C22A4 /* ArtworkView.swift */; };
+		11C2101AB4BE266822ED82B8 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */; };
+		2965FF15ABAA79CA7D66A290 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */; };
+		3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F261A504048695A705BB75AE /* SessionStore.swift */; };
+		4B2480F5F968AF87A8271D39 /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5794BD769D3702E72C3BE553 /* PlayerController.swift */; };
+		61A56178921CB4058610A4AB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FE8EA9F2733908C4E939FB /* Models.swift */; };
+		6C5B56A3603A5C32518CDEFB /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DD3280C008A7D07068187 /* AppModel.swift */; };
+		6FF62BB0FD72428CE91F79CF /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69A82DD441DB03834AE1DA3 /* APIClient.swift */; };
+		8EAC8F5554CC1CDE3BB92D4C /* MuseekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */; };
+		9532644724EDBB8C6D31279D /* MuseekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66327D1461E2BC4822B2E673 /* MuseekApp.swift */; };
+		BE036E07F4BDAF3664966DC9 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */; };
+		E21CB62B24F4417BEA24C5DE /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8056BE5C8B0A2A2C876B7ED /* RootView.swift */; };
+		E83A54A102A6E53F68FECA7C /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B29153A55E04122D941C2B0 /* CollectionView.swift */; };
+		E95B7D40D514121AE5EBB4CF /* OfflineLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */; };
+		E9E25ABD5D40CB261AD190B7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A797B171C766C6623FE0270B /* SettingsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2FCB0C7B0EB4E37C35E22259 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7D1BDDCF4CF56C728E54A28D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FEE7E8C35D6F84562EDC43B;
+			remoteInfo = Museek;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		13FE8EA9F2733908C4E939FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		229A58C3DBDF0D7BA09BA875 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		40133CD54C37B4AC62024505 /* MuseekTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5794BD769D3702E72C3BE553 /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
+		66327D1461E2BC4822B2E673 /* MuseekApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseekApp.swift; sourceTree = "<group>"; };
+		7C4DD3280C008A7D07068187 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		8B29153A55E04122D941C2B0 /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
+		9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseekTests.swift; sourceTree = "<group>"; };
+		9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A797B171C766C6623FE0270B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineLibrary.swift; sourceTree = "<group>"; };
+		B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		F261A504048695A705BB75AE /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		F69A82DD441DB03834AE1DA3 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		F8056BE5C8B0A2A2C876B7ED /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		FC0222856A08EA5FA61C22A4 /* ArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkView.swift; sourceTree = "<group>"; };
+		FF3B90613195883AC97ABF9D /* Museek.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Museek.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		48AE545CEE2F90051B1999E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FF3B90613195883AC97ABF9D /* Museek.app */,
+				40133CD54C37B4AC62024505 /* MuseekTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4FDC70D0C14C27B63F8C4AE2 /* Museek */ = {
+			isa = PBXGroup;
+			children = (
+				F69A82DD441DB03834AE1DA3 /* APIClient.swift */,
+				7C4DD3280C008A7D07068187 /* AppModel.swift */,
+				FC0222856A08EA5FA61C22A4 /* ArtworkView.swift */,
+				8B29153A55E04122D941C2B0 /* CollectionView.swift */,
+				229A58C3DBDF0D7BA09BA875 /* Info.plist */,
+				B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */,
+				13FE8EA9F2733908C4E939FB /* Models.swift */,
+				66327D1461E2BC4822B2E673 /* MuseekApp.swift */,
+				3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */,
+				AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */,
+				5794BD769D3702E72C3BE553 /* PlayerController.swift */,
+				F8056BE5C8B0A2A2C876B7ED /* RootView.swift */,
+				F261A504048695A705BB75AE /* SessionStore.swift */,
+				A797B171C766C6623FE0270B /* SettingsView.swift */,
+			);
+			path = Museek;
+			sourceTree = "<group>";
+		};
+		A0D57B596F7F032907D26BDB /* Runner */ = {
+			isa = PBXGroup;
+			children = (
+				9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */,
+			);
+			name = Runner;
+			path = ios/Runner;
+			sourceTree = "<group>";
+		};
+		B057F79713BF57E060CBD9AB = {
+			isa = PBXGroup;
+			children = (
+				4FDC70D0C14C27B63F8C4AE2 /* Museek */,
+				EFDC22A4917C3677E249367D /* MuseekTests */,
+				A0D57B596F7F032907D26BDB /* Runner */,
+				48AE545CEE2F90051B1999E5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EFDC22A4917C3677E249367D /* MuseekTests */ = {
+			isa = PBXGroup;
+			children = (
+				9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */,
+			);
+			path = MuseekTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4FEE7E8C35D6F84562EDC43B /* Museek */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 78118195B868A8A24F4450F7 /* Build configuration list for PBXNativeTarget "Museek" */;
+			buildPhases = (
+				ACDD860381C14CAB956B2935 /* Sources */,
+				DA117288CFE050A702497E4C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Museek;
+			packageProductDependencies = (
+			);
+			productName = Museek;
+			productReference = FF3B90613195883AC97ABF9D /* Museek.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EEF35B729262F83868FE3C9E /* MuseekTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F17E236626F9A0F18F09C2B9 /* Build configuration list for PBXNativeTarget "MuseekTests" */;
+			buildPhases = (
+				A5E99BEE911FB679D583A010 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0B76AA9E5C282C77A1CE9EC2 /* PBXTargetDependency */,
+			);
+			name = MuseekTests;
+			packageProductDependencies = (
+			);
+			productName = MuseekTests;
+			productReference = 40133CD54C37B4AC62024505 /* MuseekTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7D1BDDCF4CF56C728E54A28D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4FEE7E8C35D6F84562EDC43B = {
+						DevelopmentTeam = JSKJUMBXQ3;
+					};
+					EEF35B729262F83868FE3C9E = {
+						DevelopmentTeam = JSKJUMBXQ3;
+					};
+				};
+			};
+			buildConfigurationList = A7D5E72AF90C22F158343E8D /* Build configuration list for PBXProject "Museek" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = B057F79713BF57E060CBD9AB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 48AE545CEE2F90051B1999E5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4FEE7E8C35D6F84562EDC43B /* Museek */,
+				EEF35B729262F83868FE3C9E /* MuseekTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DA117288CFE050A702497E4C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2965FF15ABAA79CA7D66A290 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A5E99BEE911FB679D583A010 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8EAC8F5554CC1CDE3BB92D4C /* MuseekTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ACDD860381C14CAB956B2935 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FF62BB0FD72428CE91F79CF /* APIClient.swift in Sources */,
+				6C5B56A3603A5C32518CDEFB /* AppModel.swift in Sources */,
+				046ABAF578021EBE8F02839C /* ArtworkView.swift in Sources */,
+				E83A54A102A6E53F68FECA7C /* CollectionView.swift in Sources */,
+				BE036E07F4BDAF3664966DC9 /* LibraryView.swift in Sources */,
+				61A56178921CB4058610A4AB /* Models.swift in Sources */,
+				9532644724EDBB8C6D31279D /* MuseekApp.swift in Sources */,
+				11C2101AB4BE266822ED82B8 /* NowPlayingView.swift in Sources */,
+				E95B7D40D514121AE5EBB4CF /* OfflineLibrary.swift in Sources */,
+				4B2480F5F968AF87A8271D39 /* PlayerController.swift in Sources */,
+				E21CB62B24F4417BEA24C5DE /* RootView.swift in Sources */,
+				3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */,
+				E9E25ABD5D40CB261AD190B7 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0B76AA9E5C282C77A1CE9EC2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4FEE7E8C35D6F84562EDC43B /* Museek */;
+			targetProxy = 2FCB0C7B0EB4E37C35E22259 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		26D469A8843713594620FFFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Museek/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.museek.museekApp;
+				PRODUCT_NAME = Museek;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		47317AB665A119975F9987B6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.museek.MuseekTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Museek.app/Museek";
+			};
+			name = Release;
+		};
+		88DCB97526CDE508D7022559 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = JSKJUMBXQ3;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B18A8A7F254F43E1F02445CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.museek.MuseekTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Museek.app/Museek";
+			};
+			name = Debug;
+		};
+		B9B2D29F88D18710D3026D59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = JSKJUMBXQ3;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		FFCFA21515FF885A7D50672F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Museek/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.museek.museekApp;
+				PRODUCT_NAME = Museek;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		78118195B868A8A24F4450F7 /* Build configuration list for PBXNativeTarget "Museek" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFCFA21515FF885A7D50672F /* Debug */,
+				26D469A8843713594620FFFF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A7D5E72AF90C22F158343E8D /* Build configuration list for PBXProject "Museek" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88DCB97526CDE508D7022559 /* Debug */,
+				B9B2D29F88D18710D3026D59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F17E236626F9A0F18F09C2B9 /* Build configuration list for PBXNativeTarget "MuseekTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B18A8A7F254F43E1F02445CB /* Debug */,
+				47317AB665A119975F9987B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7D1BDDCF4CF56C728E54A28D /* Project object */;
+}

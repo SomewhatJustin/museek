@@ -1,0 +1,182 @@
+openapi: 3.1.0
+info:
+  title: Museek API
+  version: 1.0.0
+  description: Private collection browsing and authorized MP3 playback.
+servers:
+  - url: https://music.example.com
+paths:
+  /invite:
+    get:
+      operationId: openInvitation
+      responses:
+        "200":
+          description: Minimal browser bridge that opens a Museek pairing deep link from the URL fragment.
+          content:
+            text/html: {}
+  /healthz:
+    get:
+      operationId: health
+      responses:
+        "200":
+          description: Server and database are available.
+  /v1/pair:
+    post:
+      operationId: pairDevice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, deviceName]
+              properties:
+                code: { type: string, example: ABCD-2345 }
+                deviceName: { type: string, example: iPhone }
+      responses:
+        "201":
+          description: Device session created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PairResult" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429":
+          description: Too many pairing attempts.
+  /v1/collections:
+    get:
+      operationId: listCollections
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Collections granted to this recipient.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [collections]
+                properties:
+                  collections:
+                    type: array
+                    items: { $ref: "#/components/schemas/Collection" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /v1/collections/{id}:
+    get:
+      operationId: getCollection
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Collection and ordered tracks.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Collection"
+                  - type: object
+                    required: [tracks]
+                    properties:
+                      tracks:
+                        type: array
+                        items: { $ref: "#/components/schemas/Track" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/tracks/{id}/play-url:
+    post:
+      operationId: createPlayUrl
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Short-lived URL authorized for one track.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, expiresAt]
+                properties:
+                  url: { type: string, format: uri }
+                  expiresAt: { type: string, format: date-time }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/streams/{id}:
+    get:
+      operationId: streamTrack
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: token
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Full MP3 response.
+          content:
+            audio/mpeg: {}
+        "206":
+          description: Byte range of the MP3.
+          content:
+            audio/mpeg: {}
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/artwork/{id}:
+    get:
+      operationId: getArtwork
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200": { description: Authorized artwork bytes. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+  responses:
+    Unauthorized:
+      description: Missing, invalid, expired, or revoked authorization.
+    NotFound:
+      description: The resource is absent or not granted to this recipient.
+  schemas:
+    PairResult:
+      type: object
+      required: [token, recipient]
+      properties:
+        token: { type: string }
+        recipient:
+          type: object
+          required: [id, name]
+          properties:
+            id: { type: string }
+            name: { type: string }
+    Collection:
+      type: object
+      required: [id, name, trackCount, lastScanned]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        artworkId: { type: string }
+        trackCount: { type: integer, minimum: 0 }
+        lastScanned: { type: string, format: date-time }
+    Track:
+      type: object
+      required: [id, collectionId, title]
+      properties:
+        id: { type: string }
+        collectionId: { type: string }
+        title: { type: string }
+        artist: { type: string }
+        album: { type: string }
+        discNumber: { type: integer, minimum: 0 }
+        trackNumber: { type: integer, minimum: 0 }
+        durationMs: { type: integer, minimum: 0 }
+        artworkId: { type: string }

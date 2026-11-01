@@ -1,0 +1,36 @@
+name: museek
+
+services:
+  data-init:
+    image: busybox:1.37
+    user: "0:0"
+    command: ["sh", "-c", "chown -R 65532:65532 /data"]
+    volumes:
+      - museek-data:/data
+    restart: "no"
+
+  museek:
+    image: museek:latest
+    command: ["server", "--scan-interval", "45s"]
+    environment:
+      MUSEEK_MUSIC_DIR: /music
+      MUSEEK_DATA_DIR: /data
+      MUSEEK_LISTEN: :8080
+      MUSEEK_PUBLIC_URL: https://elitedesk-1.tail6900fe.ts.net/museek
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - ./music:/music:ro
+      - museek-data:/data
+    depends_on:
+      data-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  museek-data:
