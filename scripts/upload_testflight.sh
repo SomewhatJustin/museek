@@ -5,6 +5,10 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 app_dir="$repo_root/app"
 export_options="$app_dir/ios/ExportOptions-TestFlight.plist"
+if [[ "${MUSEEK_CI_UPLOAD:-0}" == 1 ]]
+then
+  export_options="$app_dir/ios/ExportOptions-CI.plist"
+fi
 build_name="${BUILD_NAME:-1.0.0}"
 build_number="${BUILD_NUMBER:-$(date -u +%Y%m%d%H%M%S)}"
 simulator_destination="${SIMULATOR_DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
@@ -65,11 +69,25 @@ xcodebuild \
   archive
 
 upload_output="$(mktemp -d "${TMPDIR:-/tmp}/museek-testflight.XXXXXX")"
-xcodebuild \
-  -exportArchive \
-  -archivePath "$archive_path" \
-  -exportPath "$upload_output" \
-  -exportOptionsPlist "$export_options" \
-  "${authentication_args[@]}"
+export_args=(
+  -exportArchive
+  -archivePath "$archive_path"
+  -exportPath "$upload_output"
+  -exportOptionsPlist "$export_options"
+)
+if [[ "${MUSEEK_CI_UPLOAD:-0}" != 1 ]]
+then
+  export_args+=("${authentication_args[@]}")
+fi
+xcodebuild "${export_args[@]}"
+
+if [[ "${MUSEEK_CI_UPLOAD:-0}" == 1 ]]
+then
+  xcrun altool --upload-package "$upload_output/Museek.ipa" \
+    --p8-file-path "$ASC_KEY_PATH" \
+    --api-key "$ASC_KEY_ID" \
+    --api-issuer "$ASC_ISSUER_ID" \
+    --wait
+fi
 
 echo "Museek $build_name ($build_number) was submitted to App Store Connect using team $apple_team_id."

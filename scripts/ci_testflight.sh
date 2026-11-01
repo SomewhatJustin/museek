@@ -14,8 +14,9 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 umask 077
 mkdir -m 700 "$key_dir"
-export ASC_KEY_PATH="$key_dir/AuthKey.p8"
+export ASC_KEY_PATH="$key_dir/AuthKey_$ASC_KEY_ID.p8"
 printf '%s\n' "$ASC_PRIVATE_KEY" > "$ASC_KEY_PATH"
 chmod 600 "$ASC_KEY_PATH"
 unset ASC_PRIVATE_KEY
+export MUSEEK_CI_UPLOAD=1
 bash "$repo_root/scripts/upload_testflight.sh"

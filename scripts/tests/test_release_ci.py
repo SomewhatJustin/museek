@@ -24,6 +24,7 @@ class ReleaseCI(unittest.TestCase):
         self.key_dir = self.base / 'museek-asc-123-2'
         for name in ('xcodegen', 'plutil'):
             self.mock(name, '#!/bin/bash\nexit 0\n')
+        self.mock('xcrun', '#!/bin/bash\nprintf "%s\\n" "$*" >> "$LOG"\n')
 
     def mock(self, name, text):
         path = self.bin / name
@@ -51,6 +52,12 @@ printf '%s\n' "$*" >> "$LOG"
         self.assertIn('test', commands)
         self.assertIn('archive', commands)
         self.assertIn('-exportArchive', commands)
+        self.assertIn('ExportOptions-CI.plist', commands)
+        self.assertIn('altool --upload-package', commands)
+        self.assertIn('--wait', commands)
+        export_command = next(line for line in commands.splitlines() if '-exportArchive' in line)
+        self.assertNotIn('-allowProvisioningUpdates', export_command)
+        self.assertNotIn('-authenticationKey', export_command)
 
     def test_failure_cleans_key(self):
         self.mock('xcodebuild', '#!/bin/bash\nexit 42\n')
