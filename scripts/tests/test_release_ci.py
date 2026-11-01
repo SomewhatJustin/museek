@@ -64,6 +64,14 @@ printf '%s\n' "$*" >> "$LOG"
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(self.key_dir.exists())
 
+    def test_release_rejects_other_apple_teams_before_building(self):
+        self.env['APPLE_TEAM_ID'] = 'OTHERTEAM1'
+        self.mock('xcodebuild', '#!/bin/bash\ntouch "$LOG"\n')
+        result = self.run_script('upload_testflight.sh')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('personal team JSKJUMBXQ3', result.stderr)
+        self.assertFalse(Path(self.env['LOG']).exists())
+
     def test_verify_is_unsigned_sdk_only(self):
         self.mock('xcodebuild', '#!/bin/bash\nprintf "%s\\n" "$*" > "$LOG"\n')
         result = self.run_script('verify_ios.sh')

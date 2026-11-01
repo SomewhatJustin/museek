@@ -9,6 +9,11 @@ build_name="${BUILD_NAME:-1.0.0}"
 build_number="${BUILD_NUMBER:-$(date -u +%Y%m%d%H%M%S)}"
 simulator_destination="${SIMULATOR_DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 apple_team_id="${APPLE_TEAM_ID:-JSKJUMBXQ3}"
+if [[ "$apple_team_id" != JSKJUMBXQ3 ]]
+then
+  echo "Museek releases require Justin Fowler's personal team JSKJUMBXQ3." >&2
+  exit 1
+fi
 archive_path="$app_dir/build/ios/archive/Museek-$build_number.xcarchive"
 
 for command_name in xcodegen xcodebuild plutil

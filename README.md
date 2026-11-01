@@ -86,7 +86,7 @@ After the app record exists in App Store Connect and Xcode is signed into an aut
 scripts/upload_testflight.sh
 ```
 
-The script uses the signed-in Xcode account and the project's Apple team by default. Set `APPLE_TEAM_ID` to target a different authorized paid team. For unattended uploads, also set `ASC_KEY_ID`, `ASC_ISSUER_ID`, and `ASC_KEY_PATH` to an App Store Connect API key before running it.
+The script requires Justin Fowler's personal Apple team `JSKJUMBXQ3`. For unattended uploads, set `ASC_KEY_ID`, `ASC_ISSUER_ID`, and `ASC_KEY_PATH` to an App Store Connect API key for that personal team before running it.
 
 The iOS app declares background audio mode so playback and system media controls continue while the screen is locked.
 

@@ -4,7 +4,7 @@ Every push to **main** runs `.github/workflows/testflight.yml` on **macbook-m1-c
 
 For a manual run, choose **Actions → TestFlight → Run workflow → main**. Other refs are skipped. Leave `upload` unchecked for an unsigned simulator SDK build of the app and unit tests (`build-for-testing`). This compiles tests without running them or contacting App Store Connect, and requires Xcode's simulator SDK rather than an installed simulator runtime.
 
-Check `upload` to invoke `scripts/upload_testflight.sh`: tests on **iPhone 17 Pro**, Release archive, then export/upload with `app/ios/ExportOptions-TestFlight.plist`. A successful submission is not proof Apple has finished processing or made the build available to testers. Build version defaults to `1.0.0` and build number to the UTC timestamp including seconds. `BUILD_NAME`, `BUILD_NUMBER`, `APPLE_TEAM_ID`, and `SIMULATOR_DESTINATION` can override the script defaults.
+Check `upload` to invoke `scripts/upload_testflight.sh`: tests on **iPhone 17 Pro**, Release archive, then export/upload with `app/ios/ExportOptions-TestFlight.plist`. A successful submission is not proof Apple has finished processing or made the build available to testers. Build version defaults to `1.0.0` and build number to the UTC timestamp including seconds. `BUILD_NAME`, `BUILD_NUMBER`, and `SIMULATOR_DESTINATION` can override the script defaults. The script rejects any Apple team other than `JSKJUMBXQ3` before building or contacting Apple.
 
 ## Runner and environment prerequisites
 
@@ -18,6 +18,8 @@ Check `upload` to invoke `scripts/upload_testflight.sh`: tests on **iPhone 17 Pr
   - `ASC_PRIVATE_KEY`: complete raw multiline `.p8` private key, not base64 and not a filename.
 - The API key needs appropriate App Store Connect access to upload this app and permission for any automatic provisioning operations needed.
 - Apple Developer team **JSKJUMBXQ3**, bundle ID **app.museek.museekApp**, App Store Connect app **6804269481** (Museek Mixtape Player). Install a valid signing certificate **with private key** in the dedicated keychain and ensure valid provisioning is available (or authorized automatic provisioning). Apple agreements must be current. An API key alone does not establish that signing works.
+
+The release workflow and export options explicitly select Justin Fowler's personal team `JSKJUMBXQ3`. Use only that team's API credentials and signing assets for this runner; do not use the FUTO account.
 
 **Signing and upload have not been verified.** Missing signing identities, profiles, App Store Connect authorization, or simulator runtime will block upload. Verify mode intentionally does not validate these prerequisites.
 

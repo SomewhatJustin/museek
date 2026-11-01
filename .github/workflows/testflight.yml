@@ -26,6 +26,7 @@ jobs:
     timeout-minutes: 60
     env:
       DEVELOPER_DIR: /Applications/Xcode-27.2.0.app/Contents/Developer
+      APPLE_TEAM_ID: JSKJUMBXQ3 # Justin Fowler's personal team
     defaults:
       run:
         shell: bash
