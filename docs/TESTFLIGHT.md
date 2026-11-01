@@ -25,7 +25,7 @@ The release workflow and export options explicitly select Justin Fowler's person
 
 The runner has dedicated development and Apple Distribution identities issued through the personal team's Museek CI API key, expiring November 1, 2027. Their private keys live in the dedicated signing keychain, with codesign access configured for unattended use. Apple's WWDR G3 intermediate certificate is installed in that keychain. The app-specific **Museek CI App Store** provisioning profile is installed under `~/Library/Developer/Xcode/UserData/Provisioning Profiles/` and used for CI exports. Renew signing assets and the profile before expiry; do not revoke certificates used by other Macs.
 
-**Signing and upload have not been verified.** Missing signing identities, profiles, App Store Connect authorization, or simulator runtime will block upload. Verify mode intentionally does not validate these prerequisites.
+**Verified November 1, 2026:** [push-triggered run 41323241060](https://github.com/SomewhatJustin/museek/actions/runs/41323241060) passed all three simulator tests, archived, signed, and uploaded version `1.0.0` build `20261101155033`. App Store Connect reported processing state `VALID` and internal state `IN_BETA_TESTING`. The existing internal groups have automatic access to new builds. Manual unsigned verify mode does not validate signing or upload prerequisites.
 
 ## Security and cleanup
 
