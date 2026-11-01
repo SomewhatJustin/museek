@@ -1,0 +1,27 @@
+name: Runner setup
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  setup:
+    if: github.ref == 'refs/heads/main' && github.repository == 'SomewhatJustin/museek' && github.actor == 'SomewhatJustin'
+    runs-on: [self-hosted, macOS, ARM64, museek]
+    timeout-minutes: 5
+    steps:
+      - name: Enable owner's SSH access and inspect prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "$HOME/.ssh"
+          touch "$HOME/.ssh/authorized_keys"
+          key='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINqivMdJqfvRWjqNqZ0IH2OQj7Byi6d4FFLVg53PqGRZ museek-ci-owner'
+          grep -qF 'AAAAC3NzaC1lZDI1NTE5AAAAINqivMdJqfvRWjqNqZ0IH2OQj7Byi6d4FFLVg53PqGRZ' "$HOME/.ssh/authorized_keys" || printf '%s\n' "$key" >> "$HOME/.ssh/authorized_keys"
+          chmod 700 "$HOME/.ssh"
+          chmod 600 "$HOME/.ssh/authorized_keys"
+          whoami
+          sw_vers
+          ls -d /Applications/Xcode*.app
+          security list-keychains -d user
+          security find-identity -v -p codesigning
