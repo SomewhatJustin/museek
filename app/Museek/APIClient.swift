@@ -41,6 +41,22 @@ actor APIClient {
         return AppSession(serverURL: baseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/")), token: result.token, recipientID: result.recipient.id, recipientName: result.recipient.name)
     }
 
+    func detectTailnet() async throws -> Bool {
+        struct Server: Decodable { let name: String; let tailnetJoin: Bool; let version: Int }
+        let (data, response) = try await request("/v1/server", timeout: 3)
+        try validate(response, data: data, expected: 200)
+        let server = try JSONDecoder().decode(Server.self, from: data)
+        return server.name == "Museek" && server.tailnetJoin && server.version == 1
+    }
+
+    func joinTailnet(deviceName: String) async throws -> AppSession {
+        struct Request: Encodable { let deviceName: String }
+        struct Recipient: Decodable { let id: String; let name: String }
+        struct Response: Decodable { let token: String; let recipient: Recipient }
+        let result: Response = try await send("/v1/tailnet/join", method: "POST", body: Request(deviceName: deviceName), expected: 201)
+        return AppSession(serverURL: baseURL.absoluteString, token: result.token, recipientID: result.recipient.id, recipientName: result.recipient.name)
+    }
+
     func collections() async throws -> [CollectionSummary] {
         struct Response: Decodable { let collections: [CollectionSummary] }
         return try await send("/v1/collections", as: Response.self).collections
@@ -88,10 +104,10 @@ actor APIClient {
         catch { throw APIError(message: "The server returned an unreadable response.", statusCode: nil) }
     }
 
-    private func request(_ path: String, method: String = "GET", body: Data? = nil) async throws -> (Data, URLResponse) {
+    private func request(_ path: String, method: String = "GET", body: Data? = nil, timeout: TimeInterval = 15) async throws -> (Data, URLResponse) {
         let cleanPath = path.hasPrefix("/") ? String(path.dropFirst()) : path
         let url = baseURL.appending(path: cleanPath)
-        var request = URLRequest(url: url, timeoutInterval: 15)
+        var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if let token { request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }

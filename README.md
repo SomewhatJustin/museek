@@ -12,6 +12,15 @@ To make MP3 copies of an AAC/FLAC folder while preserving the source files and m
 scripts/convert_music.sh SOURCE_DIRECTORY DESTINATION_DIRECTORY
 ```
 
+## Optional Tailscale discovery and joining
+
+The native SwiftUI app detects the known private server and offers **Join Museek**
+only after an authorized response. Joining requires an explicit tap; manual
+invitations remain available. The private join listener is **disabled by default**
+and must never share the public Funnel upstream. See [docs/TAILNET.md](docs/TAILNET.md)
+for identity mappings, the opt-in Compose overlay, trust boundaries and deployment
+verification.
+
 ## Run the server
 
 Requirements: Docker, a server reachable from the internet, a DNS name pointed at it, and inbound ports 80/443.

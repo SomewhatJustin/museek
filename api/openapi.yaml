@@ -6,6 +6,61 @@ info:
 servers:
   - url: https://music.example.com
 paths:
+  /v1/server:
+    servers:
+      - url: https://elitedesk-1.tail6900fe.ts.net:10002
+    x-private-listener-only: true
+    get:
+      operationId: discoverTailnetServer
+      description: >-
+        Available only on the opt-in private listener behind trusted local Tailscale
+        Serve. Requires the proxy-injected exact allowlisted Tailscale identity;
+        rejects Funnel ingress. Never available on the public listener. Clients
+        must not supply identity headers. Does not create sessions or grants.
+      responses:
+        "200":
+          description: Authorized Museek server detected; explicit Join tap still required.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, tailnetJoin, version]
+                properties:
+                  name: { const: Museek }
+                  tailnetJoin: { const: true }
+                  version: { const: 1 }
+        "403": { description: "Missing, ambiguous, unauthorized identity or Funnel ingress." }
+        "404": { description: This endpoint is not mounted on the public listener. }
+  /v1/tailnet/join:
+    servers:
+      - url: https://elitedesk-1.tail6900fe.ts.net:10002
+    x-private-listener-only: true
+    post:
+      operationId: joinTailnetServer
+      description: >-
+        Private trusted local Tailscale Serve ingress only, with the same identity
+        checks as discovery. Call only on explicit user action. Creates an ordinary
+        revocable device session for the preconfigured existing recipient; creates
+        no recipients or collection grants. Identity is never accepted from the body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                deviceName: { type: string, maxLength: 200 }
+      responses:
+        "201":
+          description: Device session created using existing recipient grants.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PairResult" }
+        "400": { description: "Invalid JSON, unknown fields or device name longer than 200 UTF-8 bytes." }
+        "403": { description: "Missing, ambiguous, unauthorized identity or Funnel ingress." }
+        "404": { description: This endpoint is not mounted on the public listener. }
+        "429": { description: More than five join attempts per identity in five minutes. }
   /invite:
     get:
       operationId: openInvitation

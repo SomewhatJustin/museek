@@ -28,6 +28,16 @@ targets:
     scheme:
       testTargets:
         - MuseekTests
+        - MuseekUITests
+  MuseekUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: MuseekUITests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Museek
   MuseekTests:
     type: bundle.unit-test
     platform: iOS

@@ -13,11 +13,15 @@
 		3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F261A504048695A705BB75AE /* SessionStore.swift */; };
 		4B2480F5F968AF87A8271D39 /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5794BD769D3702E72C3BE553 /* PlayerController.swift */; };
 		61A56178921CB4058610A4AB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FE8EA9F2733908C4E939FB /* Models.swift */; };
+		63AEDD4BB373D67FD1E4C2FA /* TailnetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0574A95ECBE06E38826FB132 /* TailnetTests.swift */; };
 		6C5B56A3603A5C32518CDEFB /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DD3280C008A7D07068187 /* AppModel.swift */; };
 		6FF62BB0FD72428CE91F79CF /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69A82DD441DB03834AE1DA3 /* APIClient.swift */; };
 		8EAC8F5554CC1CDE3BB92D4C /* MuseekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */; };
 		9532644724EDBB8C6D31279D /* MuseekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66327D1461E2BC4822B2E673 /* MuseekApp.swift */; };
+		9720AF1D4B308F17194D8C3A /* TailnetDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8FD82757C6C45C8CBD0867 /* TailnetDiscovery.swift */; };
 		BE036E07F4BDAF3664966DC9 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */; };
+		C5EADD723274CDAB3221C27D /* TailnetTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */; };
+		CF6791A5C77E5C35CB326CEC /* TailnetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B57DE55FF034567FAE48E6 /* TailnetUITests.swift */; };
 		E21CB62B24F4417BEA24C5DE /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8056BE5C8B0A2A2C876B7ED /* RootView.swift */; };
 		E83A54A102A6E53F68FECA7C /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B29153A55E04122D941C2B0 /* CollectionView.swift */; };
 		E95B7D40D514121AE5EBB4CF /* OfflineLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */; };
@@ -25,6 +29,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		23FA33238AD8C59082FE5B98 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7D1BDDCF4CF56C728E54A28D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FEE7E8C35D6F84562EDC43B;
+			remoteInfo = Museek;
+		};
 		2FCB0C7B0EB4E37C35E22259 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7D1BDDCF4CF56C728E54A28D /* Project object */;
@@ -35,19 +46,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0574A95ECBE06E38826FB132 /* TailnetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailnetTests.swift; sourceTree = "<group>"; };
 		13FE8EA9F2733908C4E939FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		229A58C3DBDF0D7BA09BA875 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		40133CD54C37B4AC62024505 /* MuseekTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		411D000E63B8DF37651F0BF3 /* MuseekUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5794BD769D3702E72C3BE553 /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
 		66327D1461E2BC4822B2E673 /* MuseekApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseekApp.swift; sourceTree = "<group>"; };
 		7C4DD3280C008A7D07068187 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailnetTransportTests.swift; sourceTree = "<group>"; };
 		8B29153A55E04122D941C2B0 /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseekTests.swift; sourceTree = "<group>"; };
 		9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A797B171C766C6623FE0270B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineLibrary.swift; sourceTree = "<group>"; };
 		B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		BD8FD82757C6C45C8CBD0867 /* TailnetDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailnetDiscovery.swift; sourceTree = "<group>"; };
+		F0B57DE55FF034567FAE48E6 /* TailnetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailnetUITests.swift; sourceTree = "<group>"; };
 		F261A504048695A705BB75AE /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
 		F69A82DD441DB03834AE1DA3 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		F8056BE5C8B0A2A2C876B7ED /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -61,6 +77,7 @@
 			children = (
 				FF3B90613195883AC97ABF9D /* Museek.app */,
 				40133CD54C37B4AC62024505 /* MuseekTests.xctest */,
+				411D000E63B8DF37651F0BF3 /* MuseekUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -82,8 +99,17 @@
 				F8056BE5C8B0A2A2C876B7ED /* RootView.swift */,
 				F261A504048695A705BB75AE /* SessionStore.swift */,
 				A797B171C766C6623FE0270B /* SettingsView.swift */,
+				BD8FD82757C6C45C8CBD0867 /* TailnetDiscovery.swift */,
 			);
 			path = Museek;
+			sourceTree = "<group>";
+		};
+		6EED9B9F8BD490CE7FAB20A9 /* MuseekUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F0B57DE55FF034567FAE48E6 /* TailnetUITests.swift */,
+			);
+			path = MuseekUITests;
 			sourceTree = "<group>";
 		};
 		A0D57B596F7F032907D26BDB /* Runner */ = {
@@ -100,6 +126,7 @@
 			children = (
 				4FDC70D0C14C27B63F8C4AE2 /* Museek */,
 				EFDC22A4917C3677E249367D /* MuseekTests */,
+				6EED9B9F8BD490CE7FAB20A9 /* MuseekUITests */,
 				A0D57B596F7F032907D26BDB /* Runner */,
 				48AE545CEE2F90051B1999E5 /* Products */,
 			);
@@ -109,6 +136,8 @@
 			isa = PBXGroup;
 			children = (
 				9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */,
+				0574A95ECBE06E38826FB132 /* TailnetTests.swift */,
+				7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */,
 			);
 			path = MuseekTests;
 			sourceTree = "<group>";
@@ -133,6 +162,24 @@
 			productName = Museek;
 			productReference = FF3B90613195883AC97ABF9D /* Museek.app */;
 			productType = "com.apple.product-type.application";
+		};
+		7CC397A4800CA42B9E4C6EB5 /* MuseekUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5494A49861A5BDA683EBDFF /* Build configuration list for PBXNativeTarget "MuseekUITests" */;
+			buildPhases = (
+				E526C519B8A4C4850F60EB6A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1278D5469DFB35B4E5FA9D31 /* PBXTargetDependency */,
+			);
+			name = MuseekUITests;
+			packageProductDependencies = (
+			);
+			productName = MuseekUITests;
+			productReference = 411D000E63B8DF37651F0BF3 /* MuseekUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		EEF35B729262F83868FE3C9E /* MuseekTests */ = {
 			isa = PBXNativeTarget;
@@ -164,6 +211,10 @@
 					4FEE7E8C35D6F84562EDC43B = {
 						DevelopmentTeam = JSKJUMBXQ3;
 					};
+					7CC397A4800CA42B9E4C6EB5 = {
+						DevelopmentTeam = JSKJUMBXQ3;
+						TestTargetID = 4FEE7E8C35D6F84562EDC43B;
+					};
 					EEF35B729262F83868FE3C9E = {
 						DevelopmentTeam = JSKJUMBXQ3;
 					};
@@ -184,6 +235,7 @@
 			projectRoot = "";
 			targets = (
 				4FEE7E8C35D6F84562EDC43B /* Museek */,
+				7CC397A4800CA42B9E4C6EB5 /* MuseekUITests */,
 				EEF35B729262F83868FE3C9E /* MuseekTests */,
 			);
 		};
@@ -206,6 +258,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8EAC8F5554CC1CDE3BB92D4C /* MuseekTests.swift in Sources */,
+				63AEDD4BB373D67FD1E4C2FA /* TailnetTests.swift in Sources */,
+				C5EADD723274CDAB3221C27D /* TailnetTransportTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +280,15 @@
 				E21CB62B24F4417BEA24C5DE /* RootView.swift in Sources */,
 				3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */,
 				E9E25ABD5D40CB261AD190B7 /* SettingsView.swift in Sources */,
+				9720AF1D4B308F17194D8C3A /* TailnetDiscovery.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E526C519B8A4C4850F60EB6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF6791A5C77E5C35CB326CEC /* TailnetUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +299,11 @@
 			isa = PBXTargetDependency;
 			target = 4FEE7E8C35D6F84562EDC43B /* Museek */;
 			targetProxy = 2FCB0C7B0EB4E37C35E22259 /* PBXContainerItemProxy */;
+		};
+		1278D5469DFB35B4E5FA9D31 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4FEE7E8C35D6F84562EDC43B /* Museek */;
+			targetProxy = 23FA33238AD8C59082FE5B98 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -257,6 +325,23 @@
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
+		};
+		360DCE02C74470B60F0B29D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.museek.MuseekUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Museek;
+			};
+			name = Debug;
 		};
 		47317AB665A119975F9987B6 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -417,6 +502,23 @@
 			};
 			name = Release;
 		};
+		CE94014F7A24F68105A1A7F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.museek.MuseekUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Museek;
+			};
+			name = Release;
+		};
 		FFCFA21515FF885A7D50672F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -452,6 +554,15 @@
 			buildConfigurations = (
 				88DCB97526CDE508D7022559 /* Debug */,
 				B9B2D29F88D18710D3026D59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D5494A49861A5BDA683EBDFF /* Build configuration list for PBXNativeTarget "MuseekUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				360DCE02C74470B60F0B29D5 /* Debug */,
+				CE94014F7A24F68105A1A7F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

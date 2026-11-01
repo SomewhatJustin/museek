@@ -15,6 +15,7 @@ struct RootView: View {
 
 struct PairView: View {
     @Bindable var model: AppModel
+    @State private var discovery = TailnetDiscovery()
     @State private var server = ""
     @State private var code = ""
     @FocusState private var focus: Field?
@@ -38,6 +39,27 @@ struct PairView: View {
                         .foregroundStyle(.secondary)
                         .padding(.top, 12)
 
+                    VStack(alignment: .leading, spacing: 12) {
+                        if discovery.state == .checking {
+                            ProgressView("Checking for Museek on Tailscale…")
+                        } else if discovery.state == .found {
+                            Label("Museek found", systemImage: "checkmark.circle.fill")
+                                .font(.headline).accessibilityIdentifier("tailnet.found")
+                            Text("Connect using your authorized Tailscale account.").font(.subheadline).foregroundStyle(.secondary)
+                            Button(discovery.joining ? "Joining…" : "Join Museek") {
+                                Task { await model.joinTailnet(discovery) }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(model.pairing || discovery.joining)
+                            .accessibilityIdentifier("tailnet.join")
+                        } else if discovery.state == .notFound {
+                            Text("Museek wasn’t found on Tailscale. You can still use an invitation.").font(.subheadline).foregroundStyle(.secondary)
+                            Button("Check again") { Task { await discovery.detect() } }
+                        }
+                        if let error = discovery.error { Text(error).foregroundStyle(.red).font(.subheadline) }
+                    }.padding(.top, 24)
+
+                    Text("Or use an invitation").font(.headline).padding(.top, 24)
                     VStack(spacing: 14) {
                         field("Server address", text: $server, icon: "server.rack", field: .server)
                             .textContentType(.URL).keyboardType(.URL)
@@ -70,6 +92,7 @@ struct PairView: View {
                 .frame(maxWidth: 460).padding(28).frame(maxWidth: .infinity)
             }
             .background(Color.museekBackground)
+            .task { await discovery.detect() }
         }
     }
 

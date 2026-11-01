@@ -1,0 +1,9 @@
+# Opt-in overlay; never publish 8081 on a non-loopback interface.
+# docker compose -f elitedesk.compose.yaml -f elitedesk-tailnet.compose.yaml ...
+services:
+  museek:
+    environment:
+      MUSEEK_TAILNET_LISTEN: :8081
+      MUSEEK_TAILNET_USERS: ${MUSEEK_TAILNET_USERS:?Set an exact login-to-existing-recipient JSON object}
+    ports:
+      - "127.0.0.1:18081:8081"

@@ -50,6 +50,17 @@
                ReferencedContainer = "container:Museek.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7CC397A4800CA42B9E4C6EB5"
+               BuildableName = "MuseekUITests.xctest"
+               BlueprintName = "MuseekUITests"
+               ReferencedContainer = "container:Museek.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

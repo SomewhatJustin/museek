@@ -46,6 +46,19 @@ final class AppModel {
         catch { pairError = "Pairing failed. Please try again." }
     }
 
+    func joinTailnet(_ discovery: TailnetDiscovery) async {
+        guard session == nil, !pairing else { return }
+        pairing = true
+        defer { pairing = false }
+        guard let newSession = await discovery.join() else { return }
+        do {
+            try sessionStore.save(newSession)
+            session = newSession
+            offline = OfflineLibrary(session: newSession)
+            await refresh()
+        } catch { pairError = "Could not save this device session. Please try again." }
+    }
+
     func open(_ link: PairingLink) async {
         if let session, !session.sharesHost(with: link) { return }
         await pair(serverURL: link.serverURL, code: link.code)

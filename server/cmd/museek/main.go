@@ -64,7 +64,9 @@ Usage:
   museek revoke-device DEVICE_ID [--data DIR]
 
 Environment:
-  MUSEEK_MUSIC_DIR, MUSEEK_DATA_DIR, MUSEEK_LISTEN, MUSEEK_PUBLIC_URL`
+  MUSEEK_MUSIC_DIR, MUSEEK_DATA_DIR, MUSEEK_LISTEN, MUSEEK_PUBLIC_URL
+  MUSEEK_TAILNET_LISTEN (disabled unless set; trusted local Serve ingress only)
+  MUSEEK_TAILNET_USERS (JSON exact Tailscale login -> existing recipient name)`
 
 func usageError() error { return errors.New("unknown or missing command; run 'museek help'") }
 
@@ -288,11 +290,33 @@ func runServer(args []string) error {
 		ReadHeaderTimeout: 10 * time.Second,
 		IdleTimeout:       2 * time.Minute,
 	}
-	errCh := make(chan error, 1)
-	go func() {
-		logger.Info("server listening", "address", *listen)
-		errCh <- server.ListenAndServe()
+	servers := []*http.Server{server}
+	if address := os.Getenv("MUSEEK_TAILNET_LISTEN"); address != "" {
+		handler, err := api.TailnetHandler(os.Getenv("MUSEEK_TAILNET_USERS"))
+		if err != nil {
+			return fmt.Errorf("tailnet configuration: %w", err)
+		}
+		servers = append(servers, &http.Server{Addr: address, Handler: handler, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute})
+	}
+	listeners, err := bindServers(servers)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		for _, listener := range listeners {
+			_ = listener.Close()
+		}
+		for _, srv := range servers {
+			_ = srv.Close()
+		}
 	}()
+	errCh := make(chan error, len(servers))
+	for i, srv := range servers {
+		go func() {
+			logger.Info("server listening", "address", listeners[i].Addr().String())
+			errCh <- srv.Serve(listeners[i])
+		}()
+	}
 	select {
 	case err := <-errCh:
 		if !errors.Is(err, http.ErrServerClosed) {
@@ -301,7 +325,12 @@ func runServer(args []string) error {
 	case <-ctx.Done():
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer shutdownCancel()
-		return server.Shutdown(shutdownCtx)
+		for _, srv := range servers {
+			if err := srv.Shutdown(shutdownCtx); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 	return nil
 }
