@@ -1,0 +1,54 @@
+name: TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'Upload to TestFlight (false = unsigned simulator build only)'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: museek-testflight
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    if: github.ref == 'refs/heads/main' && github.repository == 'SomewhatJustin/museek'
+    runs-on: [self-hosted, macOS, ARM64, museek]
+    environment: testflight
+    timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode-27.2.0.app/Contents/Developer
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out dispatched main commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Configure Homebrew PATH and check tools
+        run: |
+          echo '/opt/homebrew/bin' >> "$GITHUB_PATH"
+          echo '/opt/homebrew/sbin' >> "$GITHUB_PATH"
+          export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+          xcodebuild -version
+          xcodegen --version
+      - name: Verify unsigned simulator build (no runtime required)
+        if: ${{ !inputs.upload }}
+        run: bash scripts/verify_ios.sh
+      - name: Test, archive and upload
+        if: ${{ inputs.upload }}
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: bash scripts/ci_testflight.sh
+      - name: Always remove temporary API key material
+        if: ${{ always() }}
+        run: rm -rf -- "$RUNNER_TEMP/museek-asc-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
