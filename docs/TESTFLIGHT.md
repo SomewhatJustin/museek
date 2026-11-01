@@ -10,7 +10,7 @@ Check `upload` to invoke `scripts/upload_testflight.sh`: tests on **iPhone 17 Pr
 
 - Dedicated Apple Silicon Mac runner **macbook-m1-ci**, registered with labels `self-hosted`, `macOS`, `ARM64`, `museek`. It runs as user `ci` through a LaunchAgent and must remain logged in and awake.
 - `/Applications/Xcode-27.2.0.app`, accepted license/first-launch components, and Homebrew `xcodegen` in `/opt/homebrew/bin`. `DEVELOPER_DIR` is explicit; system `xcode-select` is not changed.
-- For uploads: an installed compatible iOS simulator runtime and an available **iPhone 17 Pro** simulator, as required by the existing upload script.
+- For uploads: iOS **26.2** simulator runtime (build `23C54`) and an available **iPhone 17 Pro** simulator. Xcode 27.2 supplies the build SDK; the tests run on the installed iOS 26.2 runtime.
 - Dedicated default signing keychain at `~/Library/Keychains/museek-ci.keychain-db`, included in the user keychain search list. Its random password is stored only on the runner at `~/.config/museek-ci/keychain-password` with mode `600`, outside the repository and runner workspace. Each release unlocks it; cleanup locks it again.
 - GitHub environment **testflight** is configured to allow deployment only from **main**. Add environment secrets (repository secrets also resolve):
   - `ASC_KEY_ID`: App Store Connect API key ID.
@@ -20,6 +20,8 @@ Check `upload` to invoke `scripts/upload_testflight.sh`: tests on **iPhone 17 Pr
 - Apple Developer team **JSKJUMBXQ3**, bundle ID **app.museek.museekApp**, App Store Connect app **6804269481** (Museek Mixtape Player). Install a valid signing certificate **with private key** in the dedicated keychain and ensure valid provisioning is available (or authorized automatic provisioning). Apple agreements must be current. An API key alone does not establish that signing works.
 
 The release workflow and export options explicitly select Justin Fowler's personal team `JSKJUMBXQ3`. Use only that team's API credentials and signing assets for this runner; do not use the FUTO account.
+
+The runner has a dedicated development signing identity issued through the personal team's Museek CI API key, expiring November 1, 2027. Its private key lives in the dedicated signing keychain, with codesign access configured for unattended use. Apple's WWDR G3 intermediate certificate is installed in that keychain. Renew signing assets before expiry; do not revoke certificates used by other Macs.
 
 **Signing and upload have not been verified.** Missing signing identities, profiles, App Store Connect authorization, or simulator runtime will block upload. Verify mode intentionally does not validate these prerequisites.
 
