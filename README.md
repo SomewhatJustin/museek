@@ -12,6 +12,17 @@ To make MP3 copies of an AAC/FLAC folder while preserving the source files and m
 scripts/convert_music.sh SOURCE_DIRECTORY DESTINATION_DIRECTORY
 ```
 
+To incrementally convert downloaded purchases and transfer only new songs to
+the Linux server, including duplicate checks against existing playlists:
+
+```sh
+python3 scripts/sync_music.py "$HOME/Music/Music/Media.localized/Music" --dry-run
+python3 scripts/sync_music.py "$HOME/Music/Music/Media.localized/Music"
+```
+
+See [music sync setup](docs/MUSIC-SYNC.md) for duplicate handling, server options,
+and the optional background job that runs every five minutes.
+
 ## Optional Tailscale discovery and joining
 
 The native SwiftUI app detects the known private server and offers **Join Museek**
