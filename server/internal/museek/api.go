@@ -173,7 +173,11 @@ func (a *API) stream(w http.ResponseWriter, r *http.Request) {
 		a.internalError(w, r, err)
 		return
 	}
-	path, err := a.safeMusicPath(track.RelativePath)
+	root := a.musicRoot
+	if track.Storage == "data" {
+		root = a.store.dataDir
+	}
+	path, err := safeFilePath(root, track.RelativePath)
 	if errors.Is(err, os.ErrNotExist) {
 		writeError(w, http.StatusNotFound, "track file not found")
 		return
@@ -259,15 +263,23 @@ func sessionFromContext(ctx context.Context) Session {
 }
 
 func (a *API) safeMusicPath(relative string) (string, error) {
+	return safeFilePath(a.musicRoot, relative)
+}
+
+func safeFilePath(root, relative string) (string, error) {
+	root, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		return "", err
+	}
 	if filepath.IsAbs(relative) {
 		return "", errors.New("absolute music path rejected")
 	}
-	candidate := filepath.Join(a.musicRoot, filepath.FromSlash(relative))
+	candidate := filepath.Join(root, filepath.FromSlash(relative))
 	resolved, err := filepath.EvalSymlinks(candidate)
 	if err != nil {
 		return "", err
 	}
-	rel, err := filepath.Rel(a.musicRoot, resolved)
+	rel, err := filepath.Rel(root, resolved)
 	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
 		return "", errors.New("music path escapes configured root")
 	}

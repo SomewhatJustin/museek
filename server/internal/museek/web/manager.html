@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{.Title}} · Museek</title><link rel="stylesheet" href="/manage/style.css"><script defer src="/manage/manager.js"></script></head>
+<body><div class="layout">
+<aside>
+ <a class="brand" href="/manage/">Museek <span>manage</span></a>
+ <nav aria-label="Music"><a href="/manage/" {{if not .Selected}}aria-current="page"{{end}}>All songs <span>Library</span></a><h2>Playlists</h2>
+ {{range .Collections}}<a href="?collection={{.ID}}" {{if eq .ID $.Selected}}aria-current="page"{{end}}>{{.Name}}</a>{{else}}<p class="muted">No playlists yet.</p>{{end}}
+ </nav>
+ <details class="new-playlist"><summary>+ New playlist</summary>
+ {{if .Recipients}}<form method="post" action="/manage/">
+ <input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="action" value="create">
+ <label for="playlist-name">Playlist name</label><input id="playlist-name" name="name" required maxlength="200" autocomplete="off">
+ <label for="recipient">Share with</label><select id="recipient" name="recipient" required>{{range .Recipients}}<option value="{{.ID}}">{{.Name}}</option>{{end}}</select>
+ <p class="hint">Appears in this listener’s iPhone app.</p><button type="submit">Create playlist</button></form>
+ {{else}}<p>Create a listener with the server’s invite command first.</p>{{end}}
+ </details>
+</aside>
+<main id="main">
+ <header><div><p class="eyebrow">{{if .Selected}}PLAYLIST{{else}}YOUR LIBRARY{{end}}</p><h1>{{.Title}}</h1>
+ <p class="muted">{{if .Selected}}{{len .Tracks}} songs · changes save to the server{{else}}Songs are shared across your playlists.{{end}}</p></div>
+ {{if .Selected}}<a class="button secondary" href="?collection={{.Selected}}&amp;add=1#add-songs">+ Add from library</a>{{end}}</header>
+ {{if .Message}}<p class="notice" role="status">{{.Message}}</p>{{end}}
+ <details class="upload"><summary>+ Upload MP3s {{if .Selected}}to this playlist{{else}}to library{{end}}</summary>
+ <p>{{if .Selected}}Uploaded songs also become available in your library.{{else}}Add songs here without adding them to a playlist.{{end}} Up to 50 MP3s, 128 MB each, 512 MB total.</p>
+ <form method="post" enctype="multipart/form-data" action="/manage/" data-upload>
+ <input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="action" value="upload"><input type="hidden" name="collection" value="{{.Selected}}">
+ <label for="files">Choose songs</label><input id="files" type="file" name="files" accept=".mp3,audio/mpeg" multiple required><button type="submit">Upload songs</button><span class="upload-status" role="status"></span>
+ </form></details>
+ {{if .Selected}}
+ <section aria-label="Playlist songs"><p class="hint">Use ↑ and ↓ to change the order. Removing a song keeps it in your library.</p>
+ <ol class="songs">
+ {{range $i, $track := .Tracks}}<li id="track-{{.ID}}"><article><div class="song-line"><div class="song-title"><h2>{{.Title}}</h2><p class="muted">{{if .Artist}}{{.Artist}}{{else}}Unknown artist{{end}}</p></div>
+ <form method="post" action="/manage/" class="row-actions"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="collection" value="{{$.Selected}}"><input type="hidden" name="track" value="{{.ID}}">
+ <button class="secondary square" name="action" value="up" aria-label="Move {{.Title}} up" {{if eq $i 0}}disabled{{end}}>↑</button>
+ <button class="secondary square" name="action" value="down" aria-label="Move {{.Title}} down" {{if eq $i (lastIndex $.Tracks)}}disabled{{end}}>↓</button>
+ <button class="text-button remove" name="action" value="remove" aria-label="Remove {{.Title}} from playlist">Remove</button></form></div>
+ <details class="note" {{if .Note}}open{{end}}><summary>{{if .Note}}Song note{{else}}+ Add a note{{end}}</summary><form method="post" action="/manage/" data-note>
+ <input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="collection" value="{{$.Selected}}"><input type="hidden" name="track" value="{{.ID}}"><input type="hidden" name="action" value="note">
+ <label class="sr-only" for="note-{{.ID}}">Note for {{.Title}}</label><textarea id="note-{{.ID}}" name="note" maxlength="10000" rows="3" placeholder="A note for this song in this playlist…">{{.Note}}</textarea>
+ <div class="note-footer"><small>Only for this playlist. Clear the text to remove the note.</small><button class="secondary" type="submit">Save note</button></div></form></details>
+ </article></li>{{else}}<li class="empty">This playlist is empty. Add songs from your library or upload MP3s.</li>{{end}}
+ </ol></section>{{end}}
+ {{if or (not .Selected) .Adding}}<section id="add-songs" aria-label="Library songs">
+ {{if .Adding}}<div class="section-heading"><h2>Add from library</h2><a href="?collection={{.Selected}}">Close</a></div>{{end}}
+ <form method="get" action="/manage/" class="search"><input type="hidden" name="collection" value="{{.Selected}}">{{if .Adding}}<input type="hidden" name="add" value="1">{{end}}
+ <label class="sr-only" for="search">Search library</label><input type="search" id="search" name="q" value="{{.Query}}" placeholder="Search songs, artists, albums"><button class="secondary" type="submit">Search</button></form>
+ <form method="post" action="/manage/" data-library><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="action" value="add">
+ <div class="library-actions">{{if .Selected}}<input type="hidden" name="collection" value="{{.Selected}}"><span class="hint">Select songs to add to {{.Title}}.</span>{{else}}<label for="destination">Add selected songs to</label><select id="destination" name="collection" required><option value="">Choose playlist…</option>{{range .Collections}}<option value="{{.ID}}">{{.Name}}</option>{{end}}</select>{{end}}<button type="submit" {{if not .Collections}}disabled{{end}}>Add selected</button></div>
+ <div class="library-songs">{{range .Library}}<label class="library-song"><input type="checkbox" name="tracks" value="{{.ID}}"><span><strong>{{.Title}}</strong><span class="muted">{{if .Artist}}{{.Artist}}{{else}}Unknown artist{{end}}{{if .Album}} · {{.Album}}{{end}}</span></span></label>{{else}}<p class="empty">{{if .Query}}No matching songs.{{else if .Adding}}All library songs are already in this playlist.{{else}}Your library is empty. Upload MP3s to get started.{{end}}</p>{{end}}</div>
+ </form></section>{{end}}
+ <footer>Changes appear when you refresh the playlist in Museek on iPhone. Offline downloads keep their saved version until downloaded again.</footer>
+</main></div></body></html>

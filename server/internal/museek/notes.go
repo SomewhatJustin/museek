@@ -23,7 +23,7 @@ func (s *Store) SetTrackNote(ctx context.Context, collectionID, trackID, body st
 	}
 	defer tx.Rollback()
 	var exists int
-	if err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM tracks WHERE collection_id = ? AND id = ?", collectionID, trackID).Scan(&exists); err != nil {
+	if err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM playlist_entries WHERE collection_id = ? AND track_id = ?", collectionID, trackID).Scan(&exists); err != nil {
 		return err
 	}
 	if exists == 0 {
@@ -42,7 +42,7 @@ ON CONFLICT(collection_id, track_id) DO UPDATE SET body = excluded.body`, collec
 }
 
 func (s *Store) noteCollections(ctx context.Context) ([]Collection, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, name FROM collections ORDER BY name COLLATE NOCASE")
+	rows, err := s.db.QueryContext(ctx, "SELECT id, name FROM collections WHERE kind <> 2 ORDER BY name COLLATE NOCASE")
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +60,8 @@ func (s *Store) noteCollections(ctx context.Context) ([]Collection, error) {
 
 func (s *Store) noteTracks(ctx context.Context, collectionID string) ([]Track, error) {
 	rows, err := s.db.QueryContext(ctx, `SELECT t.id, t.title, t.artist, COALESCE(n.body, '')
-FROM tracks t LEFT JOIN track_notes n ON n.collection_id = t.collection_id AND n.track_id = t.id
-WHERE t.collection_id = ? ORDER BY t.disc_number, t.track_number, t.relative_path COLLATE NOCASE`, collectionID)
+FROM playlist_entries e JOIN tracks t ON t.id = e.track_id LEFT JOIN track_notes n ON n.collection_id = e.collection_id AND n.track_id = t.id
+WHERE e.collection_id = ? ORDER BY e.position, e.track_id`, collectionID)
 	if err != nil {
 		return nil, err
 	}

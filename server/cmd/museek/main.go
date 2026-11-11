@@ -32,6 +32,8 @@ func run(args []string) error {
 	switch args[0] {
 	case "server":
 		return runServer(args[1:])
+	case "manage":
+		return runManage(args[1:])
 	case "notes":
 		return runNotes(args[1:])
 	case "scan":
@@ -59,6 +61,7 @@ const usageText = `Museek private music server
 Usage:
   museek server [--music DIR] [--data DIR] [--listen ADDR] [--public-url URL]
   museek notes [--music DIR] [--data DIR]
+  museek manage [--music DIR] [--data DIR] (local browser manager on 8082)
   museek scan [--music DIR] [--data DIR]
   museek invite --recipient NAME --collection NAME [--music DIR] [--data DIR] [--public-url URL]
   museek share --recipient NAME --collection NAME [--data DIR]
@@ -69,7 +72,9 @@ Usage:
 Environment:
   MUSEEK_MUSIC_DIR, MUSEEK_DATA_DIR, MUSEEK_LISTEN, MUSEEK_PUBLIC_URL
   MUSEEK_TAILNET_LISTEN (disabled unless set; trusted local Serve ingress only)
-  MUSEEK_TAILNET_USERS (JSON exact Tailscale login -> existing recipient name)`
+  MUSEEK_TAILNET_USERS (JSON exact Tailscale login -> existing recipient name)
+  MUSEEK_MANAGE_LISTEN (disabled unless set; trusted local Serve ingress only)
+  MUSEEK_MANAGE_USERS (JSON array of exact Tailscale owner logins)`
 
 func usageError() error { return errors.New("unknown or missing command; run 'museek help'") }
 
@@ -301,6 +306,13 @@ func runServer(args []string) error {
 		}
 		servers = append(servers, &http.Server{Addr: address, Handler: handler, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute})
 	}
+	if address := os.Getenv("MUSEEK_MANAGE_LISTEN"); address != "" {
+		handler, err := store.ManagementHandler(os.Getenv("MUSEEK_MANAGE_USERS"))
+		if err != nil {
+			return fmt.Errorf("management configuration: %w", err)
+		}
+		servers = append(servers, &http.Server{Addr: address, Handler: handler, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute})
+	}
 	listeners, err := bindServers(servers)
 	if err != nil {
 		return err
@@ -367,4 +379,27 @@ func runNotes(args []string) error {
 	fmt.Println("Edit playlist notes at http://127.0.0.1:8081 (local access only)")
 	server := &http.Server{Addr: "127.0.0.1:8081", Handler: handler, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute}
 	return server.ListenAndServe()
+}
+
+// A local alternative for development or SSH forwarding; no network binding flag.
+func runManage(args []string) error {
+	flags := flag.NewFlagSet("manage", flag.ContinueOnError)
+	common := addCommonFlags(flags)
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	store, scanner, err := openStoreAndScanner(common)
+	if err != nil {
+		return err
+	}
+	defer store.Close()
+	if _, err := scanner.Scan(context.Background()); err != nil {
+		return err
+	}
+	handler, err := store.LocalManagementHandler()
+	if err != nil {
+		return err
+	}
+	fmt.Println("Manage music at http://127.0.0.1:8082/manage/ (local access only)")
+	return (&http.Server{Addr: "127.0.0.1:8082", Handler: handler, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute}).ListenAndServe()
 }

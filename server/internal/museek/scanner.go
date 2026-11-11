@@ -120,6 +120,10 @@ ON CONFLICT(id) DO UPDATE SET
 					return ScanResult{}, err
 				}
 			}
+			var existing int
+			if err := tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM tracks WHERE id = ?", track.ID).Scan(&existing); err != nil {
+				return ScanResult{}, err
+			}
 			_, err = tx.ExecContext(ctx, `
 INSERT INTO tracks (
   id, collection_id, relative_path, file_size, file_mtime_ns, title, artist, album,
@@ -144,13 +148,18 @@ ON CONFLICT(id) DO UPDATE SET
 			if err != nil {
 				return ScanResult{}, fmt.Errorf("index track %q: %w", track.RelativePath, err)
 			}
+			if existing == 0 {
+				if _, err := tx.ExecContext(ctx, `INSERT INTO playlist_entries(collection_id, track_id, position) VALUES(?, ?, (SELECT COALESCE(MAX(position), -1) + 1 FROM playlist_entries WHERE collection_id = ?))`, collection.ID, track.ID, collection.ID); err != nil {
+					return ScanResult{}, err
+				}
+			}
 		}
 	}
 
-	if _, err := tx.ExecContext(ctx, `DELETE FROM tracks WHERE seen_at <> ?`, seen); err != nil {
+	if _, err := tx.ExecContext(ctx, `DELETE FROM tracks WHERE storage = 'music' AND seen_at <> ?`, seen); err != nil {
 		return ScanResult{}, fmt.Errorf("remove missing tracks: %w", err)
 	}
-	if _, err := tx.ExecContext(ctx, `DELETE FROM collections WHERE seen_at <> ?`, seen); err != nil {
+	if _, err := tx.ExecContext(ctx, `DELETE FROM collections WHERE kind = 0 AND seen_at <> ?`, seen); err != nil {
 		return ScanResult{}, fmt.Errorf("remove missing collections: %w", err)
 	}
 	if _, err := tx.ExecContext(ctx, `

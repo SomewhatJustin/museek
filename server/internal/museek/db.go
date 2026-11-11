@@ -122,7 +122,7 @@ CREATE INDEX IF NOT EXISTS sessions_token_idx ON device_sessions(token_hash);
 	if _, err := s.db.ExecContext(ctx, schema); err != nil {
 		return fmt.Errorf("migrate database: %w", err)
 	}
-	return nil
+	return s.migratePlaylists(ctx)
 }
 
 func nowUnix() int64 { return time.Now().UTC().Unix() }

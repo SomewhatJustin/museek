@@ -231,7 +231,7 @@ components:
         note:
           type: string
           maxLength: 10000
-          description: Optional plain-text note scoped to this collection entry. Omitted when absent; removed with the entry. Managed in the separate loopback owner editor.
+          description: Optional plain-text note scoped to this collection entry. Omitted when absent; removed with the entry. Managed in the separate owner browser interface. A library song can belong to several collections with independent notes and ordering.
         title: { type: string }
         artist: { type: string }
         album: { type: string }

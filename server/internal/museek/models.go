@@ -45,6 +45,7 @@ type Session struct {
 type TrackFile struct {
 	Track
 	RelativePath string
+	Storage      string
 	ModifiedAt   time.Time
 }
 

@@ -113,11 +113,30 @@ xcodebuild -project Museek.xcodeproj -scheme Museek -destination 'generic/platfo
 
 The server API is documented in [api/openapi.yaml](api/openapi.yaml).
 
+## Manage playlists in your browser
+
+Create playlists, reorder songs, add playlist-specific notes, remove songs, reuse
+songs from the shared library, and upload MP3s to a playlist or just the library.
+The manager is a minimal responsive page served by the existing Go binary. Open
+**https://elitedesk-1.tail6900fe.ts.net:10003/manage/** on the owner’s tailnet account.
+For local use:
+
+```sh
+cd server
+go run ./cmd/museek manage --music /path/to/music --data /path/to/data
+```
+
+Open **http://127.0.0.1:8082/manage/**. For owner-authorized access from anywhere on
+the tailnet, use the separate private listener and
+[`deploy/manage.compose.yaml`](deploy/manage.compose.yaml). See
+[the browser manager guide](docs/WEB-MANAGER.md) for setup, storage/backup details,
+and iPhone refresh behavior. The public/Funnel listener never exposes the manager.
+
 ## Add playlist song notes
 
 Notes belong to a **song entry in one collection**, with at most one optional note
-per entry. Two copies of a song in different collection folders have independent
-notes. Rescanning keeps notes for existing entries; deleting or renaming a song
+per entry. The same library song can appear in multiple playlists with independent
+notes. Existing copies in different collection folders also keep independent notes. Rescanning keeps notes for existing entries; deleting or renaming a song
 removes its old entry and note. There are no global song notes.
 
 Start the owner editor against the same music and data directories as the server:

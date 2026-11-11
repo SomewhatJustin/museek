@@ -1,0 +1,9 @@
+# Owner-only manager; proxy this port only through private Tailscale Serve.
+# docker compose -f elitedesk.compose.yaml -f manage.compose.yaml up -d
+services:
+  museek:
+    environment:
+      MUSEEK_MANAGE_LISTEN: :8082
+      MUSEEK_MANAGE_USERS: ${MUSEEK_MANAGE_USERS:?Set a JSON array of exact owner Tailscale logins}
+    ports:
+      - "127.0.0.1:18082:8082"

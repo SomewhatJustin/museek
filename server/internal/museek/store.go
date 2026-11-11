@@ -169,10 +169,10 @@ SELECT id, recipient_id, device_name FROM device_sessions WHERE id = ? AND revok
 
 func (s *Store) ListCollections(ctx context.Context, recipientID string) ([]Collection, error) {
 	rows, err := s.db.QueryContext(ctx, `
-SELECT c.id, c.name, c.artwork_id, COUNT(t.id), c.scanned_at
+SELECT c.id, c.name, c.artwork_id, COUNT(e.track_id), c.scanned_at
 FROM collections c
 JOIN grants g ON g.collection_id = c.id AND g.recipient_id = ?
-LEFT JOIN tracks t ON t.collection_id = c.id
+LEFT JOIN playlist_entries e ON e.collection_id = c.id
 GROUP BY c.id
 ORDER BY c.name COLLATE NOCASE`, recipientID)
 	if err != nil {
@@ -196,10 +196,10 @@ func (s *Store) CollectionDetail(ctx context.Context, recipientID, collectionID 
 	var result CollectionDetail
 	var scanned int64
 	err := s.db.QueryRowContext(ctx, `
-SELECT c.id, c.name, c.artwork_id, COUNT(t.id), c.scanned_at
+SELECT c.id, c.name, c.artwork_id, COUNT(e.track_id), c.scanned_at
 FROM collections c
 JOIN grants g ON g.collection_id = c.id AND g.recipient_id = ?
-LEFT JOIN tracks t ON t.collection_id = c.id
+LEFT JOIN playlist_entries e ON e.collection_id = c.id
 WHERE c.id = ?
 GROUP BY c.id`, recipientID, collectionID).
 		Scan(&result.ID, &result.Name, &result.ArtworkID, &result.TrackCount, &scanned)
@@ -211,11 +211,11 @@ GROUP BY c.id`, recipientID, collectionID).
 	}
 	result.LastScanned = time.Unix(0, scanned).UTC()
 	rows, err := s.db.QueryContext(ctx, `
-SELECT t.id, t.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number, t.duration_ms, t.artwork_id, COALESCE(n.body, '')
-FROM tracks t
-LEFT JOIN track_notes n ON n.collection_id = t.collection_id AND n.track_id = t.id
-WHERE t.collection_id = ?
-ORDER BY t.disc_number, t.track_number, t.relative_path COLLATE NOCASE`, collectionID)
+SELECT t.id, e.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number, t.duration_ms, t.artwork_id, COALESCE(n.body, '')
+FROM playlist_entries e JOIN tracks t ON t.id = e.track_id
+LEFT JOIN track_notes n ON n.collection_id = e.collection_id AND n.track_id = e.track_id
+WHERE e.collection_id = ?
+ORDER BY e.position, e.track_id`, collectionID)
 	if err != nil {
 		return CollectionDetail{}, err
 	}
@@ -235,13 +235,14 @@ func (s *Store) TrackForRecipient(ctx context.Context, recipientID, trackID stri
 	var track TrackFile
 	var mtimeNS int64
 	err := s.db.QueryRowContext(ctx, `
-SELECT t.id, t.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number,
-       t.duration_ms, t.artwork_id, t.relative_path, t.file_mtime_ns
+SELECT t.id, e.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number,
+       t.duration_ms, t.artwork_id, t.relative_path, t.file_mtime_ns, t.storage
 FROM tracks t
-JOIN grants g ON g.collection_id = t.collection_id AND g.recipient_id = ?
-WHERE t.id = ?`, recipientID, trackID).
+JOIN playlist_entries e ON e.track_id = t.id
+JOIN grants g ON g.collection_id = e.collection_id AND g.recipient_id = ?
+WHERE t.id = ? LIMIT 1`, recipientID, trackID).
 		Scan(&track.ID, &track.CollectionID, &track.Title, &track.Artist, &track.Album, &track.DiscNumber,
-			&track.TrackNumber, &track.DurationMS, &track.ArtworkID, &track.RelativePath, &mtimeNS)
+			&track.TrackNumber, &track.DurationMS, &track.ArtworkID, &track.RelativePath, &mtimeNS, &track.Storage)
 	if errors.Is(err, sql.ErrNoRows) {
 		return TrackFile{}, ErrNotFound
 	}
@@ -254,8 +255,8 @@ func (s *Store) ArtworkForRecipient(ctx context.Context, recipientID, artworkID 
 	err = s.db.QueryRowContext(ctx, `
 SELECT a.relative_cache_path, a.content_type
 FROM artworks a
-JOIN grants g ON g.collection_id = a.collection_id AND g.recipient_id = ?
-WHERE a.id = ?`, recipientID, artworkID).Scan(&rel, &contentType)
+WHERE a.id = ? AND (EXISTS (SELECT 1 FROM grants g WHERE g.collection_id = a.collection_id AND g.recipient_id = ?)
+OR EXISTS (SELECT 1 FROM tracks t JOIN playlist_entries e ON e.track_id = t.id JOIN grants g ON g.collection_id = e.collection_id WHERE t.artwork_id = a.id AND g.recipient_id = ?))`, artworkID, recipientID, recipientID).Scan(&rel, &contentType)
 	if errors.Is(err, sql.ErrNoRows) {
 		return "", "", ErrNotFound
 	}
