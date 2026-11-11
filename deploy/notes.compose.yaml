@@ -1,0 +1,19 @@
+# Optional Linux owner editor. No public port or Funnel route.
+# Use with elitedesk.compose.yaml; shares its indexed library and data volume.
+services:
+  notes:
+    image: museek:latest
+    command: ["notes"]
+    network_mode: host
+    environment:
+      MUSEEK_MUSIC_DIR: /music
+      MUSEEK_DATA_DIR: /data
+    volumes:
+      - ./music:/music:ro
+      - museek-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    profiles: ["owner"]

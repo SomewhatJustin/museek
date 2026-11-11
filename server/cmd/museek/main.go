@@ -32,6 +32,8 @@ func run(args []string) error {
 	switch args[0] {
 	case "server":
 		return runServer(args[1:])
+	case "notes":
+		return runNotes(args[1:])
 	case "scan":
 		return runScan(args[1:])
 	case "invite":
@@ -56,6 +58,7 @@ const usageText = `Museek private music server
 
 Usage:
   museek server [--music DIR] [--data DIR] [--listen ADDR] [--public-url URL]
+  museek notes [--music DIR] [--data DIR]
   museek scan [--music DIR] [--data DIR]
   museek invite --recipient NAME --collection NAME [--music DIR] [--data DIR] [--public-url URL]
   museek share --recipient NAME --collection NAME [--data DIR]
@@ -340,4 +343,28 @@ func envOr(name, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+// The owner editor is deliberately separate from the public listener.
+func runNotes(args []string) error {
+	flags := flag.NewFlagSet("notes", flag.ContinueOnError)
+	common := addCommonFlags(flags)
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	store, scanner, err := openStoreAndScanner(common)
+	if err != nil {
+		return err
+	}
+	defer store.Close()
+	if _, err := scanner.Scan(context.Background()); err != nil {
+		return err
+	}
+	handler, err := store.NoteEditorHandler()
+	if err != nil {
+		return err
+	}
+	fmt.Println("Edit playlist notes at http://127.0.0.1:8081 (local access only)")
+	server := &http.Server{Addr: "127.0.0.1:8081", Handler: handler, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute}
+	return server.ListenAndServe()
 }

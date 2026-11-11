@@ -211,10 +211,11 @@ GROUP BY c.id`, recipientID, collectionID).
 	}
 	result.LastScanned = time.Unix(0, scanned).UTC()
 	rows, err := s.db.QueryContext(ctx, `
-SELECT id, collection_id, title, artist, album, disc_number, track_number, duration_ms, artwork_id
-FROM tracks
-WHERE collection_id = ?
-ORDER BY disc_number, track_number, relative_path COLLATE NOCASE`, collectionID)
+SELECT t.id, t.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number, t.duration_ms, t.artwork_id, COALESCE(n.body, '')
+FROM tracks t
+LEFT JOIN track_notes n ON n.collection_id = t.collection_id AND n.track_id = t.id
+WHERE t.collection_id = ?
+ORDER BY t.disc_number, t.track_number, t.relative_path COLLATE NOCASE`, collectionID)
 	if err != nil {
 		return CollectionDetail{}, err
 	}
@@ -222,7 +223,7 @@ ORDER BY disc_number, track_number, relative_path COLLATE NOCASE`, collectionID)
 	result.Tracks = []Track{}
 	for rows.Next() {
 		var track Track
-		if err := rows.Scan(&track.ID, &track.CollectionID, &track.Title, &track.Artist, &track.Album, &track.DiscNumber, &track.TrackNumber, &track.DurationMS, &track.ArtworkID); err != nil {
+		if err := rows.Scan(&track.ID, &track.CollectionID, &track.Title, &track.Artist, &track.Album, &track.DiscNumber, &track.TrackNumber, &track.DurationMS, &track.ArtworkID, &track.Note); err != nil {
 			return CollectionDetail{}, err
 		}
 		result.Tracks = append(result.Tracks, track)

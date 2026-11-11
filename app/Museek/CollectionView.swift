@@ -34,9 +34,15 @@ struct CollectionView: View {
                     .padding(.top, 14)
                 Text(collection.name).font(.title2.bold()).multilineTextAlignment(.center).padding(.top, 26)
                 Text("\(collection.tracks.count) \(collection.tracks.count == 1 ? "track" : "tracks")").font(.subheadline).foregroundStyle(.secondary).padding(.top, 5).padding(.bottom, 26)
+                let noteCount = collection.tracks.filter { $0.noteText != nil }.count
+                if noteCount > 0 {
+                    Label("\(noteCount) \(noteCount == 1 ? "note" : "notes") tucked inside", systemImage: "note.text")
+                        .font(.subheadline).foregroundStyle(Color.museekAccent)
+                        .padding(.bottom, 18)
+                }
                 LazyVStack(spacing: 0) {
                     ForEach(Array(collection.tracks.enumerated()), id: \.element.id) { index, track in
-                        Button { play(collection, index: index) } label: { TrackRow(track: track, playingID: model.player.currentTrack?.id) }.buttonStyle(.plain)
+                        TrackRow(track: track, playingID: model.player.currentTrack?.id) { play(collection, index: index) }
                         if track.id != collection.tracks.last?.id { Divider().padding(.leading, 16) }
                     }
                 }
@@ -61,11 +67,15 @@ struct CollectionView: View {
 
     private var collectionMiniPlayer: some View {
         HStack(spacing: 12) {
-            ArtworkView(id: model.player.currentTrack?.artworkID ?? model.player.collection?.artworkID, model: model, cornerRadius: 8).frame(width: 44, height: 44)
-            Text(model.player.currentTrack?.title ?? "").font(.subheadline.weight(.semibold)).lineLimit(1)
+            Button { showingPlayer = true } label: {
+                HStack(spacing: 12) {
+                    ArtworkView(id: model.player.currentTrack?.artworkID ?? model.player.collection?.artworkID, model: model, cornerRadius: 8).frame(width: 44, height: 44)
+                    Text(model.player.currentTrack?.title ?? "").font(.subheadline.weight(.semibold)).lineLimit(1)
+                }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityLabel("Open Now Playing")
             Spacer()
             Button("Play or pause", systemImage: model.player.isPlaying ? "pause.fill" : "play.fill") { model.player.toggle() }.labelStyle(.iconOnly).font(.title3).frame(width: 44, height: 44)
-        }.padding(.horizontal, 12).padding(.vertical, 8).background(.regularMaterial).onTapGesture { showingPlayer = true }.overlay(alignment: .top) { Divider() }
+        }.padding(.horizontal, 12).padding(.vertical, 8).background(.regularMaterial).overlay(alignment: .top) { Divider() }
     }
 
     private func load(refresh: Bool) async {
@@ -79,20 +89,45 @@ struct CollectionView: View {
 private struct TrackRow: View {
     let track: MusicTrack
     let playingID: String?
+    let onPlay: () -> Void
+    @State private var showingNote = false
+
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(track.title).font(.body.weight(.medium)).foregroundStyle(.primary).lineLimit(1)
-                if !track.artist.isEmpty { Text(track.artist).font(.caption).foregroundStyle(.secondary).lineLimit(1) }
+        HStack(spacing: 0) {
+            Button(action: onPlay) {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(track.title).font(.body.weight(.medium)).foregroundStyle(.primary).lineLimit(1)
+                        if !track.artist.isEmpty { Text(track.artist).font(.caption).foregroundStyle(.secondary).lineLimit(1) }
+                    }
+                    Spacer()
+                    if playingID == track.id {
+                        Image(systemName: "waveform")
+                            .symbolEffect(.variableColor.iterative, options: .repeating)
+                            .font(.caption.weight(.semibold)).foregroundStyle(Color.museekAccent)
+                    }
+                }.frame(minHeight: 60).contentShape(Rectangle())
             }
-            Spacer()
-            if playingID == track.id {
-                Image(systemName: "waveform")
-                    .symbolEffect(.variableColor.iterative, options: .repeating)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Color.museekAccent)
+            .buttonStyle(.plain)
+            .accessibilityLabel("Play \(track.title)")
+            if let note = track.noteText {
+                Button { showingNote = true } label: {
+                    Image(systemName: "note.text").font(.body).foregroundStyle(Color.museekAccent)
+                        .frame(width: 44, height: 44).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Read note for \(track.title)")
+                .accessibilityIdentifier("track.note.\(track.id)")
+                .popover(isPresented: $showingNote, attachmentAnchor: .rect(.bounds)) {
+                    SongNotePopover(track: track, note: note)
+                        .presentationCompactAdaptation(.popover)
+                        .presentationBackground(Color.songNotePaper)
+                }
             }
-            if track.duration > 0 { Text(clock(track.duration)).font(.caption.monospacedDigit()).foregroundStyle(.tertiary) }
-        }.padding(.horizontal, 12).frame(minHeight: 60).contentShape(Rectangle()).accessibilityElement(children: .combine).accessibilityAddTraits(.isButton)
+            if track.duration > 0 {
+                Text(clock(track.duration)).font(.caption.monospacedDigit()).foregroundStyle(.tertiary)
+                    .padding(.leading, 6).accessibilityHidden(true)
+            }
+        }.padding(.horizontal, 12)
     }
 }

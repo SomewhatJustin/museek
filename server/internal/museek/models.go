@@ -11,6 +11,7 @@ type Collection struct {
 }
 
 type Track struct {
+	Note         string `json:"note,omitempty"`
 	ID           string `json:"id"`
 	CollectionID string `json:"collectionId"`
 	Title        string `json:"title"`

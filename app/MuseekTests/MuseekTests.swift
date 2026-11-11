@@ -2,6 +2,17 @@ import XCTest
 @testable import Museek
 
 final class MuseekTests: XCTestCase {
+    func testPlaylistNotesDecodeAndSurviveOfflineEncoding() throws {
+        let old = Data(#"{"id":"a","collectionId":"one","title":"Song"}"#.utf8)
+        XCTAssertNil(try JSONDecoder().decode(MusicTrack.self, from: old).noteText)
+        let annotated = Data(#"{"id":"b","collectionId":"two","title":"Song","note":"A personal note\nSecond line"}"#.utf8)
+        let track = try JSONDecoder().decode(MusicTrack.self, from: annotated)
+        XCTAssertEqual(track.noteText, "A personal note\nSecond line")
+        let restored = try JSONDecoder().decode(MusicTrack.self, from: JSONEncoder().encode(track))
+        XCTAssertEqual(restored, track)
+        XCTAssertNil(MusicTrack(id: "c", collectionID: "three", title: "Song", note: " \n ").noteText)
+    }
+
     func testServerNormalizationPreservesBasePath() throws {
         XCTAssertEqual(try APIClient.normalizedURL("music.example.com/museek").absoluteString, "https://music.example.com/museek")
         XCTAssertThrowsError(try APIClient.normalizedURL("http://music.example.com"))

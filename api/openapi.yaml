@@ -228,6 +228,10 @@ components:
       properties:
         id: { type: string }
         collectionId: { type: string }
+        note:
+          type: string
+          maxLength: 10000
+          description: Optional plain-text note scoped to this collection entry. Omitted when absent; removed with the entry. Managed in the separate loopback owner editor.
         title: { type: string }
         artist: { type: string }
         album: { type: string }

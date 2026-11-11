@@ -1,6 +1,41 @@
 import XCTest
 
 final class TailnetUITests: XCTestCase {
+    @MainActor func testNotesReadWithoutChangingPlayback() {
+        let app = XCUIApplication()
+        continueAfterFailure = false
+        app.launchEnvironment["MUSEEK_UI_TEST_RESET_SESSION"] = "1"
+        app.launchEnvironment["MUSEEK_UI_TEST_SCENARIO"] = "success"
+        app.launch()
+        XCTAssertTrue(app.buttons["tailnet.join"].waitForExistence(timeout: 8))
+        app.buttons["tailnet.join"].tap()
+        let collection = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Joined fixture collection")).firstMatch
+        XCTAssertTrue(collection.waitForExistence(timeout: 8))
+        collection.tap()
+        let note = app.buttons["track.note.song-b"]
+        XCTAssertTrue(note.waitForExistence(timeout: 8))
+        note.tap()
+        XCTAssertTrue(app.staticTexts["A different song’s note."].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Open Now Playing"].exists)
+        XCTAssertFalse(app.staticTexts["nowPlaying.title"].exists)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Anchored playlist note"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+        app.buttons["Close note"].tap()
+        app.buttons["Play Playing song"].tap()
+        XCTAssertTrue(app.buttons["Open Now Playing"].waitForExistence(timeout: 8))
+        note.tap()
+        XCTAssertTrue(app.staticTexts["A different song’s note."].waitForExistence(timeout: 5))
+        app.buttons["Close note"].tap()
+        app.buttons["Open Now Playing"].tap()
+        XCTAssertTrue(app.staticTexts["nowPlaying.title"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.staticTexts["nowPlaying.title"].label, "Playing song")
+        app.swipeUp()
+        XCTAssertTrue(app.staticTexts["The playing song’s note."].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["A different song’s note."].exists)
+    }
+
     @MainActor func testSuccessfulJoinPersistsSessionAndRestoresLibraryAfterRelaunch() {
         let app = XCUIApplication()
         continueAfterFailure = false

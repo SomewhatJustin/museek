@@ -30,10 +30,17 @@ struct MusicTrack: Codable, Identifiable, Hashable, Sendable {
     let durationMS: Int
     let artworkID: String?
 
+    let note: String?
+
+    var noteText: String? {
+        guard let text = note?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return nil }
+        return text
+    }
+
     var duration: TimeInterval { Double(durationMS) / 1_000 }
 
     enum CodingKeys: String, CodingKey {
-        case id, title, artist, album, discNumber, trackNumber
+        case id, title, artist, album, discNumber, trackNumber, note
         case collectionID = "collectionId"
         case durationMS = "durationMs"
         case artworkID = "artworkId"
@@ -50,9 +57,10 @@ struct MusicTrack: Codable, Identifiable, Hashable, Sendable {
         trackNumber = try values.decodeIfPresent(Int.self, forKey: .trackNumber) ?? 0
         durationMS = try values.decodeIfPresent(Int.self, forKey: .durationMS) ?? 0
         artworkID = try values.decodeIfPresent(String.self, forKey: .artworkID)
+        note = try values.decodeIfPresent(String.self, forKey: .note)
     }
 
-    init(id: String, collectionID: String, title: String, artist: String = "", album: String = "", discNumber: Int = 0, trackNumber: Int = 0, durationMS: Int = 0, artworkID: String? = nil) {
+    init(id: String, collectionID: String, title: String, artist: String = "", album: String = "", discNumber: Int = 0, trackNumber: Int = 0, durationMS: Int = 0, artworkID: String? = nil, note: String? = nil) {
         self.id = id
         self.collectionID = collectionID
         self.title = title
@@ -62,6 +70,7 @@ struct MusicTrack: Codable, Identifiable, Hashable, Sendable {
         self.trackNumber = trackNumber
         self.durationMS = durationMS
         self.artworkID = artworkID
+        self.note = note
     }
 }
 

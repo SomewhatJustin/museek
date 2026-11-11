@@ -37,6 +37,20 @@ final class UITestTransport: URLProtocol, @unchecked Sendable {
             status = 200
             let name = scenario == "restore" ? "Restored fixture collection" : "Joined fixture collection"
             body = "{\"collections\":[{\"id\":\"ui-fixture-collection\",\"name\":\"\(name)\",\"trackCount\":1}]}"
+
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/collections/ui-fixture-collection", "GET", "success")
+            where request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer":
+            status = 200
+            body = #"{"id":"ui-fixture-collection","name":"Joined fixture collection","trackCount":2,"tracks":[{"id":"song-a","collectionId":"ui-fixture-collection","title":"Playing song","note":"The playing song’s note."},{"id":"song-b","collectionId":"ui-fixture-collection","title":"Another song","note":"A different song’s note."}]}"#
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tracks/song-a/play-url", "POST", "success"),
+             ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tracks/song-b/play-url", "POST", "success"):
+            guard request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer",
+                  let url = try? Self.silentAudio() else {
+                client?.urlProtocol(self, didFailWithError: URLError(.cannotLoadFromNetwork))
+                return
+            }
+            status = 200
+            body = "{\"url\":\"\(url.absoluteString)\"}"
         default:
             status = 403
             body = #"{"error":"Unexpected UI fixture request"}"#
@@ -45,6 +59,21 @@ final class UITestTransport: URLProtocol, @unchecked Sendable {
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Data(body.utf8))
         client?.urlProtocolDidFinishLoading(self)
+    }
+    // A local WAV keeps playback UI tests independent of live networking.
+    private static func silentAudio() throws -> URL {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("museek-ui-silence.wav")
+        if FileManager.default.fileExists(atPath: url.path) { return url }
+        let size: UInt32 = 8000 * 2 * 60
+        var data = Data()
+        func text(_ value: String) { data.append(contentsOf: value.utf8) }
+        func u32(_ value: UInt32) { var v = value.littleEndian; withUnsafeBytes(of: &v) { data.append(contentsOf: $0) } }
+        func u16(_ value: UInt16) { var v = value.littleEndian; withUnsafeBytes(of: &v) { data.append(contentsOf: $0) } }
+        text("RIFF"); u32(36 + size); text("WAVEfmt "); u32(16)
+        u16(1); u16(1); u32(8000); u32(16000); u16(2); u16(16)
+        text("data"); u32(size); data.append(Data(count: Int(size)))
+        try data.write(to: url, options: .atomic)
+        return url
     }
     override func stopLoading() {}
 }

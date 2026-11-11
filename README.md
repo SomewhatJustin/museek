@@ -112,3 +112,43 @@ xcodebuild -project Museek.xcodeproj -scheme Museek -destination 'generic/platfo
 ```
 
 The server API is documented in [api/openapi.yaml](api/openapi.yaml).
+
+## Add playlist song notes
+
+Notes belong to a **song entry in one collection**, with at most one optional note
+per entry. Two copies of a song in different collection folders have independent
+notes. Rescanning keeps notes for existing entries; deleting or renaming a song
+removes its old entry and note. There are no global song notes.
+
+Start the owner editor against the same music and data directories as the server:
+
+```sh
+museek notes --music /srv/museek/music --data /srv/museek/data
+```
+
+Open **http://127.0.0.1:8081**, choose a playlist, write a song's note, and
+click **Save note**. Save an empty field to remove a note. Notes support plain
+text and line breaks, up to 10,000 characters. Newly scanned playlists appear in
+the editor after reload. Restart the editor to scan immediately if needed.
+
+For the Linux family-pilot Docker deployment, use the optional owner editor:
+
+```sh
+cd deploy
+docker compose -f elitedesk.compose.yaml -f notes.compose.yaml run --rm notes
+```
+
+From your Mac, forward its local port over SSH:
+
+```sh
+ssh -L 8081:127.0.0.1:8081 elitedesk-1
+```
+
+Then open http://127.0.0.1:8081 on your Mac. The editor binds only to the server's
+loopback interface and is separate from the public/Funnel listener. Stop it with
+Ctrl-C when finished.
+
+In the iPhone collection view, pull to refresh to fetch edits. A note icon opens
+an anchored popover without starting or changing music. Now Playing includes the
+current queue entry's note. Downloaded collections retain the notes from their
+download; remove and download again to update an offline copy.

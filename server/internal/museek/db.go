@@ -74,6 +74,14 @@ CREATE TABLE IF NOT EXISTS tracks (
   seen_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS tracks_collection_idx ON tracks(collection_id);
+CREATE UNIQUE INDEX IF NOT EXISTS tracks_collection_entry_idx ON tracks(collection_id, id);
+CREATE TABLE IF NOT EXISTS track_notes (
+  collection_id TEXT NOT NULL,
+  track_id TEXT NOT NULL,
+  body TEXT NOT NULL CHECK(length(trim(body)) > 0 AND length(body) <= 10000),
+  PRIMARY KEY (collection_id, track_id),
+  FOREIGN KEY (collection_id, track_id) REFERENCES tracks(collection_id, id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS artworks (
   id TEXT PRIMARY KEY,
   collection_id TEXT NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
