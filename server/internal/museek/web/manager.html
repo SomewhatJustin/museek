@@ -28,9 +28,9 @@
  <label for="files">Choose songs</label><input id="files" type="file" name="files" accept=".mp3,audio/mpeg" multiple required><button type="submit">Upload songs</button><span class="upload-status" role="status"></span>
  </form></details>
  {{if .Selected}}
- <section aria-label="Playlist songs"><p class="hint">Use ↑ and ↓ to change the order. Removing a song keeps it in your library.</p>
+ <section aria-label="Playlist songs"><p class="hint">Plays count iPhone listens longer than 30 seconds, including synced offline listens. Counts are for this playlist.</p><p class="hint">Use ↑ and ↓ to change the order. Removing a song keeps it in your library.</p>
  <ol class="songs">
- {{range $i, $track := .Tracks}}<li id="track-{{.ID}}"><article><div class="song-line"><div class="song-title"><h2>{{.Title}}</h2><p class="muted">{{if .Artist}}{{.Artist}}{{else}}Unknown artist{{end}}</p></div>
+ {{range $i, $track := .Tracks}}<li id="track-{{.ID}}"><article><div class="song-line"><div class="song-title"><h2>{{.Title}}</h2><p class="muted">{{if .Artist}}{{.Artist}}{{else}}Unknown artist{{end}}</p><p class="muted">{{.PlayCount}} {{if eq .PlayCount 1}}play{{else}}plays{{end}}</p></div>
  <form method="post" action="/manage/" class="row-actions"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="collection" value="{{$.Selected}}"><input type="hidden" name="track" value="{{.ID}}">
  <button class="secondary square" name="action" value="up" aria-label="Move {{.Title}} up" {{if eq $i 0}}disabled{{end}}>↑</button>
  <button class="secondary square" name="action" value="down" aria-label="Move {{.Title}} down" {{if eq $i (lastIndex $.Tracks)}}disabled{{end}}>↓</button>

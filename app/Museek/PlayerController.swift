@@ -17,7 +17,13 @@ final class PlayerController: NSObject {
     private var itemURLs: [URL] = []
     private var artwork: UIImage?
     private var timeObserver: Any?
-    private var endObserver: NSObjectProtocol?
+    var analytics: PlaybackAnalytics?
+    private var itemObservation: NSKeyValueObservation?
+    private var queuedIndices: [ObjectIdentifier: Int] = [:]
+    private var listenItem: AVPlayerItem?
+    private var listenIndex: Int?
+    private var listenProgress = ListenProgress()
+    private var seekID: UUID?
     private var statusObservation: NSKeyValueObservation?
 
     var currentTrack: MusicTrack? {
@@ -43,9 +49,11 @@ final class PlayerController: NSObject {
                 if let local = offline.localURL(for: track) { urls.append(local) }
                 else { urls.append(try await api.playURL(trackID: track.id)) }
             }
+            let newArtwork = await loadArtwork(for: collection.tracks[index], collection: collection, api: api, offline: offline)
+            finishListen()
             self.collection = collection
             itemURLs = urls
-            artwork = await loadArtwork(for: collection.tracks[index], collection: collection, api: api, offline: offline)
+            artwork = newArtwork
             begin(at: index, autoplay: true)
         } catch let error as APIError { errorMessage = error.message }
         catch { errorMessage = "This track could not be played." }
@@ -58,26 +66,43 @@ final class PlayerController: NSObject {
     }
 
     func next() {
-        guard hasNext, let currentIndex else { return }
+        guard hasNext else { return }
+        finishListen()
         player.advanceToNextItem()
-        self.currentIndex = currentIndex + 1
-        position = 0
-        updateMetadata()
+        synchronizePlaybackItem()
+        updatePlaybackState()
     }
 
     func previous() {
         guard let currentIndex else { return }
-        if position > 4 || currentIndex == 0 { seek(to: 0) }
+        if position > 4 || currentIndex == 0 {
+            sampleListen()
+            listenProgress = ListenProgress()
+            seek(to: 0)
+        }
         else { begin(at: currentIndex - 1, autoplay: isPlaying) }
     }
 
     func seek(to seconds: TimeInterval) {
-        player.seek(to: CMTime(seconds: max(0, seconds), preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
-        position = seconds
+        sampleListen()
+        listenProgress.invalidateBaseline()
+        let id = UUID()
+        seekID = id
+        player.seek(to: CMTime(seconds: max(0, seconds), preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self, seekID == id else { return }
+                seekID = nil
+                listenProgress.invalidateBaseline()
+                sampleListen()
+            }
+        }
+        position = max(0, seconds)
         updateMetadata()
     }
 
     func stop() {
+        finishListen()
+        queuedIndices = [:]
         player.pause()
         player.removeAllItems()
         collection = nil
@@ -93,9 +118,16 @@ final class PlayerController: NSObject {
     func dismissError() { errorMessage = nil }
 
     private func begin(at index: Int, autoplay: Bool) {
+        finishListen()
+        queuedIndices = [:]
         player.removeAllItems()
-        for url in itemURLs.dropFirst(index) { player.insert(AVPlayerItem(url: url), after: nil) }
+        for (offset, url) in itemURLs.enumerated().dropFirst(index) {
+            let item = AVPlayerItem(url: url)
+            queuedIndices[ObjectIdentifier(item)] = offset
+            player.insert(item, after: nil)
+        }
         currentIndex = index
+        synchronizePlaybackItem()
         position = 0
         duration = collection?.tracks[index].duration ?? 0
         updateMetadata()
@@ -122,19 +154,21 @@ final class PlayerController: NSObject {
         statusObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
             Task { @MainActor [weak self] in self?.updatePlaybackState() }
         }
-        timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 2), queue: .main) { [weak self] time in
+        timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 2), queue: .main) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                position = max(0, time.seconds.isFinite ? time.seconds : 0)
+                synchronizePlaybackItem()
+                sampleListen()
+                let seconds = player.currentTime().seconds
+                position = max(0, seconds.isFinite ? seconds : 0)
                 if let seconds = player.currentItem?.duration.seconds, seconds.isFinite, seconds > 0 { duration = seconds }
                 updateMetadata()
             }
         }
-        endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { [weak self] in
-                guard let self else { return }
-                if hasNext, let currentIndex { self.currentIndex = currentIndex + 1; position = 0; updateMetadata() }
-                else { updatePlaybackState() }
+        itemObservation = player.observe(\.currentItem, options: [.new]) { [weak self] _, _ in
+            Task { @MainActor [weak self] in
+                self?.synchronizePlaybackItem()
+                self?.updatePlaybackState()
             }
         }
     }
@@ -152,7 +186,38 @@ final class PlayerController: NSObject {
         }
     }
 
+    private func synchronizePlaybackItem() {
+        guard player.currentItem !== listenItem else { return }
+        finishListen()
+        guard let item = player.currentItem, let index = queuedIndices[ObjectIdentifier(item)] else { return }
+        listenItem = item
+        listenIndex = index
+        currentIndex = index
+        position = 0
+        duration = collection?.tracks[index].duration ?? 0
+        sampleListen()
+    }
+
+    private func sampleListen() {
+        guard seekID == nil, let item = listenItem, let index = listenIndex,
+              let collection, collection.tracks.indices.contains(index) else { return }
+        if listenProgress.sample(position: item.currentTime().seconds, uptime: ProcessInfo.processInfo.systemUptime,
+                                 playing: player.currentItem === item && player.timeControlStatus == .playing) {
+            analytics?.record(collectionID: collection.id, trackID: collection.tracks[index].id, seconds: listenProgress.seconds)
+        }
+    }
+
+    private func finishListen() {
+        sampleListen()
+        listenItem = nil
+        listenIndex = nil
+        listenProgress = ListenProgress()
+        seekID = nil
+    }
+
     private func updatePlaybackState() {
+        synchronizePlaybackItem()
+        sampleListen()
         isPlaying = player.timeControlStatus == .playing
         MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
         updateMetadata()

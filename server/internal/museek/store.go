@@ -211,7 +211,8 @@ GROUP BY c.id`, recipientID, collectionID).
 	}
 	result.LastScanned = time.Unix(0, scanned).UTC()
 	rows, err := s.db.QueryContext(ctx, `
-SELECT t.id, e.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number, t.duration_ms, t.artwork_id, COALESCE(n.body, '')
+SELECT t.id, e.collection_id, t.title, t.artist, t.album, t.disc_number, t.track_number, t.duration_ms, t.artwork_id, COALESCE(n.body, ''),
+(SELECT COUNT(*) FROM track_listens l WHERE l.collection_id = e.collection_id AND l.track_id = e.track_id)
 FROM playlist_entries e JOIN tracks t ON t.id = e.track_id
 LEFT JOIN track_notes n ON n.collection_id = e.collection_id AND n.track_id = e.track_id
 WHERE e.collection_id = ?
@@ -223,7 +224,7 @@ ORDER BY e.position, e.track_id`, collectionID)
 	result.Tracks = []Track{}
 	for rows.Next() {
 		var track Track
-		if err := rows.Scan(&track.ID, &track.CollectionID, &track.Title, &track.Artist, &track.Album, &track.DiscNumber, &track.TrackNumber, &track.DurationMS, &track.ArtworkID, &track.Note); err != nil {
+		if err := rows.Scan(&track.ID, &track.CollectionID, &track.Title, &track.Artist, &track.Album, &track.DiscNumber, &track.TrackNumber, &track.DurationMS, &track.ArtworkID, &track.Note, &track.PlayCount); err != nil {
 			return CollectionDetail{}, err
 		}
 		result.Tracks = append(result.Tracks, track)

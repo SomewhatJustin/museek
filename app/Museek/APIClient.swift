@@ -41,7 +41,7 @@ final class UITestTransport: URLProtocol, @unchecked Sendable {
         case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/collections/ui-fixture-collection", "GET", "success")
             where request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer":
             status = 200
-            body = #"{"id":"ui-fixture-collection","name":"Joined fixture collection","trackCount":2,"tracks":[{"id":"song-a","collectionId":"ui-fixture-collection","title":"Playing song","note":"The playing song’s note."},{"id":"song-b","collectionId":"ui-fixture-collection","title":"Another song","note":"A different song’s note."}]}"#
+            body = #"{"id":"ui-fixture-collection","name":"Joined fixture collection","trackCount":2,"tracks":[{"id":"song-a","collectionId":"ui-fixture-collection","title":"Playing song","playCount":12,"note":"The playing song’s note."},{"id":"song-b","collectionId":"ui-fixture-collection","title":"Another song","note":"A different song’s note."}]}"#
         case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tracks/song-a/play-url", "POST", "success"),
              ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tracks/song-b/play-url", "POST", "success"):
             guard request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer",
@@ -152,6 +152,18 @@ actor APIClient {
     func playURL(trackID: String) async throws -> URL {
         struct Response: Decodable { let url: URL }
         return try await send("/v1/tracks/\(encoded(trackID))/play-url", method: "POST", as: Response.self).url
+    }
+
+    func recordListen(_ event: PendingListen) async throws {
+        struct Request: Encodable {
+            let id: String
+            let trackId: String
+            let client = "iphone"
+            let listenedMs: Int
+        }
+        struct Response: Decodable { let recorded: Bool }
+        let _: Response = try await send("/v1/collections/\(encoded(event.collectionID))/listens", method: "POST",
+                                        body: Request(id: event.id, trackId: event.trackID, listenedMs: event.listenedMS), expected: 200)
     }
 
     func artwork(id: String) async throws -> Data {

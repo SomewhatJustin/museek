@@ -21,6 +21,23 @@ and must never share the public Funnel upstream. See [docs/TAILNET.md](docs/TAIL
 for identity mappings, the opt-in Compose overlay, trust boundaries and deployment
 verification.
 
+## Playlist analytics
+
+Each track shows its play count in the web manager's playlist view. The iPhone
+app reports playback in the background and does not display analytics.
+A play counts once per playback after **more than 30 seconds** of audio played
+in the iPhone client. Pauses, buffering, seeking, URL requests, and downloads do
+not add listening time. Pausing and resuming preserves progress; starting the
+track again or restarting it with Previous begins a new listen.
+
+Counts belong to the playlist entry and combine all its listeners and devices.
+Offline listens are saved on the phone and retried automatically while the app
+is running or when it next opens; retries cannot duplicate plays. Refresh the
+web manager to see the latest counts. Counts start with this feature
+and are removed if the song is removed from the playlist. Install the updated
+server and iPhone app to collect analytics. Playback time and client source are
+reported by the authenticated app; they are not device attestation.
+
 ## Run the server
 
 Requirements: Docker, a server reachable from the internet, a DNS name pointed at it, and inbound ports 80/443.

@@ -10,6 +10,7 @@
 		046ABAF578021EBE8F02839C /* ArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0222856A08EA5FA61C22A4 /* ArtworkView.swift */; };
 		11C2101AB4BE266822ED82B8 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */; };
 		3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F261A504048695A705BB75AE /* SessionStore.swift */; };
+		481C0673A09E778BF2F47072 /* PlaybackAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F994A097FDFB71D7BFA0E8C /* PlaybackAnalytics.swift */; };
 		4B2480F5F968AF87A8271D39 /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5794BD769D3702E72C3BE553 /* PlayerController.swift */; };
 		61A56178921CB4058610A4AB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FE8EA9F2733908C4E939FB /* Models.swift */; };
 		63AEDD4BB373D67FD1E4C2FA /* TailnetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0574A95ECBE06E38826FB132 /* TailnetTests.swift */; };
@@ -22,6 +23,7 @@
 		BE036E07F4BDAF3664966DC9 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */; };
 		C5EADD723274CDAB3221C27D /* TailnetTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */; };
 		CF6791A5C77E5C35CB326CEC /* TailnetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B57DE55FF034567FAE48E6 /* TailnetUITests.swift */; };
+		D64B5FC2FA26DC15E9EA2050 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAB14A625759E3109C5009 /* AnalyticsTests.swift */; };
 		E21CB62B24F4417BEA24C5DE /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8056BE5C8B0A2A2C876B7ED /* RootView.swift */; };
 		E83A54A102A6E53F68FECA7C /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B29153A55E04122D941C2B0 /* CollectionView.swift */; };
 		E95B7D40D514121AE5EBB4CF /* OfflineLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */; };
@@ -49,8 +51,10 @@
 		0574A95ECBE06E38826FB132 /* TailnetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailnetTests.swift; sourceTree = "<group>"; };
 		13FE8EA9F2733908C4E939FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		229A58C3DBDF0D7BA09BA875 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2F994A097FDFB71D7BFA0E8C /* PlaybackAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackAnalytics.swift; sourceTree = "<group>"; };
 		3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		3D4CE31F8DA4CEE8FEFE2663 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3FCAB14A625759E3109C5009 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		40133CD54C37B4AC62024505 /* MuseekTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		411D000E63B8DF37651F0BF3 /* MuseekUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5794BD769D3702E72C3BE553 /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 				66327D1461E2BC4822B2E673 /* MuseekApp.swift */,
 				3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */,
 				AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */,
+				2F994A097FDFB71D7BFA0E8C /* PlaybackAnalytics.swift */,
 				5794BD769D3702E72C3BE553 /* PlayerController.swift */,
 				F8056BE5C8B0A2A2C876B7ED /* RootView.swift */,
 				F261A504048695A705BB75AE /* SessionStore.swift */,
@@ -126,6 +131,7 @@
 		EFDC22A4917C3677E249367D /* MuseekTests */ = {
 			isa = PBXGroup;
 			children = (
+				3FCAB14A625759E3109C5009 /* AnalyticsTests.swift */,
 				9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */,
 				0574A95ECBE06E38826FB132 /* TailnetTests.swift */,
 				7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */,
@@ -248,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D64B5FC2FA26DC15E9EA2050 /* AnalyticsTests.swift in Sources */,
 				8EAC8F5554CC1CDE3BB92D4C /* MuseekTests.swift in Sources */,
 				63AEDD4BB373D67FD1E4C2FA /* TailnetTests.swift in Sources */,
 				C5EADD723274CDAB3221C27D /* TailnetTransportTests.swift in Sources */,
@@ -267,6 +274,7 @@
 				9532644724EDBB8C6D31279D /* MuseekApp.swift in Sources */,
 				11C2101AB4BE266822ED82B8 /* NowPlayingView.swift in Sources */,
 				E95B7D40D514121AE5EBB4CF /* OfflineLibrary.swift in Sources */,
+				481C0673A09E778BF2F47072 /* PlaybackAnalytics.swift in Sources */,
 				4B2480F5F968AF87A8271D39 /* PlayerController.swift in Sources */,
 				E21CB62B24F4417BEA24C5DE /* RootView.swift in Sources */,
 				3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */,

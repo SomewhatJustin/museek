@@ -2,7 +2,9 @@
 
 The original MVP scope below is retained as history. The November 2026 browser
 manager extends it with a shared song library, editable playlists, uploads and
-playlist-specific notes. See [the current manager guide](docs/WEB-MANAGER.md).
+playlist-specific notes. Web manager analytics now adds play counts for iPhone
+listens longer than 30 seconds; the iPhone UI stays unchanged. See [the current manager guide](docs/WEB-MANAGER.md) and
+[analytics behavior](README.md#playlist-analytics).
 
 Status: product definition  
 Primary user: a family member who should be able to listen without understanding files  

@@ -59,7 +59,8 @@ func (s *Store) noteCollections(ctx context.Context) ([]Collection, error) {
 }
 
 func (s *Store) noteTracks(ctx context.Context, collectionID string) ([]Track, error) {
-	rows, err := s.db.QueryContext(ctx, `SELECT t.id, t.title, t.artist, COALESCE(n.body, '')
+	rows, err := s.db.QueryContext(ctx, `SELECT t.id, t.title, t.artist, COALESCE(n.body, ''),
+(SELECT COUNT(*) FROM track_listens l WHERE l.collection_id = e.collection_id AND l.track_id = e.track_id)
 FROM playlist_entries e JOIN tracks t ON t.id = e.track_id LEFT JOIN track_notes n ON n.collection_id = e.collection_id AND n.track_id = t.id
 WHERE e.collection_id = ? ORDER BY e.position, e.track_id`, collectionID)
 	if err != nil {
@@ -69,7 +70,7 @@ WHERE e.collection_id = ? ORDER BY e.position, e.track_id`, collectionID)
 	var result []Track
 	for rows.Next() {
 		t := Track{CollectionID: collectionID}
-		if err := rows.Scan(&t.ID, &t.Title, &t.Artist, &t.Note); err != nil {
+		if err := rows.Scan(&t.ID, &t.Title, &t.Artist, &t.Note, &t.PlayCount); err != nil {
 			return nil, err
 		}
 		result = append(result, t)

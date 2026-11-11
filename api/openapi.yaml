@@ -136,6 +136,46 @@ paths:
                         items: { $ref: "#/components/schemas/Track" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
+  /v1/collections/{id}/listens:
+    post:
+      operationId: recordPlaylistListen
+      description: >-
+        Records one iPhone playback after more than 30000 milliseconds of actual
+        listening in this playlist. Requires a current session, playlist grant,
+        and track membership. The UUID is persisted by the client and reused on
+        retries, including offline sync. Repeating the same event is idempotent;
+        reusing its ID for another playlist, track, or recipient is rejected.
+        Source and elapsed playback are client-reported, not device attestation.
+        Stream fetches and downloads do not record plays.
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [id, trackId, client, listenedMs]
+              properties:
+                id: { type: string, pattern: "^[A-Za-z0-9_-]{1,128}$" }
+                trackId: { type: string, minLength: 1 }
+                client: { const: iphone }
+                listenedMs: { type: integer, minimum: 30001 }
+      responses:
+        "200":
+          description: Listen recorded, or the same listen was already recorded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [recorded]
+                properties:
+                  recorded: { const: true }
+        "400": { description: Invalid listen, client, duration, or reused event ID. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
   /v1/tracks/{id}/play-url:
     post:
       operationId: createPlayUrl
@@ -228,6 +268,14 @@ components:
       properties:
         id: { type: string }
         collectionId: { type: string }
+        playCount:
+          type: integer
+          minimum: 0
+          description: >-
+            Total qualifying iPhone listens for this track in this playlist,
+            across listeners and devices. Includes synced offline listens.
+            Starts at zero; no historical listens are inferred. Removed with the
+            playlist entry. Older servers may omit this field; clients use zero.
         note:
           type: string
           maxLength: 10000

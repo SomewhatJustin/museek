@@ -15,6 +15,7 @@ final class AppModel {
     private(set) var collectionDetails: [String: MusicCollection] = [:]
     private(set) var offline: OfflineLibrary
     let player = PlayerController()
+    private(set) var analytics: PlaybackAnalytics?
     private let sessionStore = SessionStore()
 
     init() {
@@ -27,6 +28,7 @@ final class AppModel {
         let restored = try? sessionStore.load()
         session = restored
         offline = OfflineLibrary(session: restored)
+        configureAnalytics()
         collections = offline.summaries
         initializing = false
         if restored != nil { Task { await refresh() } }
@@ -47,6 +49,7 @@ final class AppModel {
             try sessionStore.save(newSession)
             session = newSession
             offline = OfflineLibrary(session: newSession)
+            configureAnalytics()
             await refresh()
         } catch let error as APIError { pairError = error.message }
         catch { pairError = "Pairing failed. Please try again." }
@@ -61,6 +64,7 @@ final class AppModel {
             try sessionStore.save(newSession)
             session = newSession
             offline = OfflineLibrary(session: newSession)
+            configureAnalytics()
             await refresh()
         } catch { pairError = "Could not save this device session. Please try again." }
     }
@@ -71,6 +75,7 @@ final class AppModel {
     }
 
     func refresh() async {
+        Task { await analytics?.flush() }
         libraryState = .loading
         do {
             let remote = try await api().collections()
@@ -100,8 +105,20 @@ final class AppModel {
         }
     }
 
+    private func configureAnalytics() {
+        analytics?.deactivate()
+        analytics = session.flatMap { session in
+            guard let client = try? api() else { return nil }
+            return PlaybackAnalytics(session: session, api: client)
+        }
+        player.analytics = analytics
+    }
+
     func signOut() {
         player.stop()
+        analytics?.deactivate()
+        analytics = nil
+        player.analytics = nil
         try? sessionStore.clear()
         session = nil
         collections = []
