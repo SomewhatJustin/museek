@@ -15,8 +15,6 @@ targets:
     platform: iOS
     sources:
       - path: Museek
-      - path: ios/Runner/Assets.xcassets
-        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.museek.museekApp

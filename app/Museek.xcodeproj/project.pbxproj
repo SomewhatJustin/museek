@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		046ABAF578021EBE8F02839C /* ArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0222856A08EA5FA61C22A4 /* ArtworkView.swift */; };
 		11C2101AB4BE266822ED82B8 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */; };
-		2965FF15ABAA79CA7D66A290 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */; };
 		3EF2B69094DA104521EF37CD /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F261A504048695A705BB75AE /* SessionStore.swift */; };
 		4B2480F5F968AF87A8271D39 /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5794BD769D3702E72C3BE553 /* PlayerController.swift */; };
 		61A56178921CB4058610A4AB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FE8EA9F2733908C4E939FB /* Models.swift */; };
@@ -19,6 +18,7 @@
 		8EAC8F5554CC1CDE3BB92D4C /* MuseekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */; };
 		9532644724EDBB8C6D31279D /* MuseekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66327D1461E2BC4822B2E673 /* MuseekApp.swift */; };
 		9720AF1D4B308F17194D8C3A /* TailnetDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8FD82757C6C45C8CBD0867 /* TailnetDiscovery.swift */; };
+		B53178E5DDFC979FFC0F7CD4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D4CE31F8DA4CEE8FEFE2663 /* Assets.xcassets */; };
 		BE036E07F4BDAF3664966DC9 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */; };
 		C5EADD723274CDAB3221C27D /* TailnetTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */; };
 		CF6791A5C77E5C35CB326CEC /* TailnetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B57DE55FF034567FAE48E6 /* TailnetUITests.swift */; };
@@ -50,6 +50,7 @@
 		13FE8EA9F2733908C4E939FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		229A58C3DBDF0D7BA09BA875 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3B1AF3C4BC61364EDF278E1D /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		3D4CE31F8DA4CEE8FEFE2663 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		40133CD54C37B4AC62024505 /* MuseekTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		411D000E63B8DF37651F0BF3 /* MuseekUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MuseekUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5794BD769D3702E72C3BE553 /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
@@ -58,7 +59,6 @@
 		7E92B7D4807CC3B54F72155D /* TailnetTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailnetTransportTests.swift; sourceTree = "<group>"; };
 		8B29153A55E04122D941C2B0 /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		9DCC29D3312C8D40751CAA7C /* MuseekTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseekTests.swift; sourceTree = "<group>"; };
-		9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A797B171C766C6623FE0270B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AE8DEF46D9AFF4DFEE970521 /* OfflineLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineLibrary.swift; sourceTree = "<group>"; };
 		B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -88,6 +88,7 @@
 				F69A82DD441DB03834AE1DA3 /* APIClient.swift */,
 				7C4DD3280C008A7D07068187 /* AppModel.swift */,
 				FC0222856A08EA5FA61C22A4 /* ArtworkView.swift */,
+				3D4CE31F8DA4CEE8FEFE2663 /* Assets.xcassets */,
 				8B29153A55E04122D941C2B0 /* CollectionView.swift */,
 				229A58C3DBDF0D7BA09BA875 /* Info.plist */,
 				B7DC27BB39D3C2F9F2CCAEB8 /* LibraryView.swift */,
@@ -112,22 +113,12 @@
 			path = MuseekUITests;
 			sourceTree = "<group>";
 		};
-		A0D57B596F7F032907D26BDB /* Runner */ = {
-			isa = PBXGroup;
-			children = (
-				9F7B8D725BA247E6CDD9FF56 /* Assets.xcassets */,
-			);
-			name = Runner;
-			path = ios/Runner;
-			sourceTree = "<group>";
-		};
 		B057F79713BF57E060CBD9AB = {
 			isa = PBXGroup;
 			children = (
 				4FDC70D0C14C27B63F8C4AE2 /* Museek */,
 				EFDC22A4917C3677E249367D /* MuseekTests */,
 				6EED9B9F8BD490CE7FAB20A9 /* MuseekUITests */,
-				A0D57B596F7F032907D26BDB /* Runner */,
 				48AE545CEE2F90051B1999E5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -235,8 +226,8 @@
 			projectRoot = "";
 			targets = (
 				4FEE7E8C35D6F84562EDC43B /* Museek */,
-				7CC397A4800CA42B9E4C6EB5 /* MuseekUITests */,
 				EEF35B729262F83868FE3C9E /* MuseekTests */,
+				7CC397A4800CA42B9E4C6EB5 /* MuseekUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -246,7 +237,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2965FF15ABAA79CA7D66A290 /* Assets.xcassets in Resources */,
+				B53178E5DDFC979FFC0F7CD4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

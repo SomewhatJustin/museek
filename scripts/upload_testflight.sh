@@ -4,10 +4,10 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 app_dir="$repo_root/app"
-export_options="$app_dir/ios/ExportOptions-TestFlight.plist"
+export_options="$app_dir/ExportOptions/ExportOptions-TestFlight.plist"
 if [[ "${MUSEEK_CI_UPLOAD:-0}" == 1 ]]
 then
-  export_options="$app_dir/ios/ExportOptions-CI.plist"
+  export_options="$app_dir/ExportOptions/ExportOptions-CI.plist"
 fi
 build_name="${BUILD_NAME:-1.0.0}"
 build_number="${BUILD_NUMBER:-$(date -u +%Y%m%d%H%M%S)}"

@@ -5,12 +5,7 @@ deploy/music/
 server/museek
 server/data/
 server/music/
-app/.dart_tool/
-app/.flutter-plugins-dependencies
 app/build/
-app/ios/Pods/
-app/ios/.symlinks/
-app/ios/Flutter/ephemeral/
 
 # Local credentials and Xcode artifacts
 .env.*
