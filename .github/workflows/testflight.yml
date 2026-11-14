@@ -27,6 +27,7 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode-27.2.0.app/Contents/Developer
       APPLE_TEAM_ID: JSKJUMBXQ3 # Justin Fowler's personal team
+      SIMULATOR_DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2
     defaults:
       run:
         shell: bash
