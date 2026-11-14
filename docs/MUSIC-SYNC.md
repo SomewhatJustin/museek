@@ -28,7 +28,8 @@ not write to the server. Override `--host`, `--remote-dir`, `--collection` or
 Museek **music root**, not its data/uploads directory. Only downloaded files are
 available to sync; cloud-only purchases must first be downloaded in Music.
 
-The script searches subfolders for M4A/AAC, FLAC, MP3, WAV and AIFF. MP3s are copied
+The script searches subfolders for M4A/AAC, FLAC, MP3, WAV and AIFF. It skips iTunes
+LP bundles, which contain background audio and interface sounds. MP3s are copied
 without another audio encode; other formats use the existing converter's
 high-quality MP3 settings and retain embedded tags and artwork. Protected files
 that FFmpeg cannot decode are reported as failures; other songs can still transfer.

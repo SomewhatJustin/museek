@@ -191,7 +191,9 @@ def sync(args):
         pending = {}
         duplicates = deferred = failures = converted = 0
         files = sorted(p for p in source.rglob("*")
-                       if p.is_file() and not p.is_symlink() and p.suffix.lower() in FORMATS)
+                       if p.is_file() and not p.is_symlink() and p.suffix.lower() in FORMATS
+                       and not any(part.lower().endswith('.itlp')
+                                   for part in p.relative_to(source).parts))
         for path in files:
             try:
                 before = signature(path)

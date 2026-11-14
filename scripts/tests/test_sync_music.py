@@ -131,6 +131,13 @@ class MusicSync(unittest.TestCase):
         self.assertEqual(sync_music.sync(self.args), 1)
         self.assertEqual(self.remote_songs(), [])
 
+    def test_itunes_lp_background_audio_and_interface_sounds_are_not_imported(self):
+        self.song('Artist/Album/song.m4a')
+        self.song('Artist/Album/Interactive.itlp/audio/background_audio.m4a', frequency=880)
+        self.song('Artist/Album/Interactive.itlp/sounds/selection.aif', frequency=660)
+        self.assertEqual(sync_music.sync(self.args), 0)
+        self.assertEqual(len(self.remote_songs()), 1)
+
     def test_source_changed_during_conversion_is_not_published(self):
         path = self.song()
         convert = sync_music.convert
