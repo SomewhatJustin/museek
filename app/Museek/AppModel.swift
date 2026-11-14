@@ -13,6 +13,8 @@ final class AppModel {
     private(set) var libraryState: LibraryState = .loading
     private(set) var collections: [CollectionSummary] = []
     private(set) var collectionDetails: [String: MusicCollection] = [:]
+    var openedPlaylist: CollectionSummary?
+    var linkError: String?
     private(set) var offline: OfflineLibrary
     let player = PlayerController()
     private(set) var analytics: PlaybackAnalytics?
@@ -74,6 +76,34 @@ final class AppModel {
         await pair(serverURL: link.serverURL, code: link.code)
     }
 
+    func open(_ link: PlaylistLink) async {
+        guard !pairing else { return }
+        pairing = true
+        defer { pairing = false }
+        do {
+            let client: APIClient
+            if let session {
+                guard URL(string: session.serverURL)?.host?.lowercased() == URL(string: link.serverURL)?.host?.lowercased() else {
+                    throw APIError(message: "This playlist is on a different server. Sign out before opening its link.", statusCode: nil)
+                }
+                // Use the saved server address, never send a bearer to an address
+                // supplied by an incoming link (including a different port/path).
+                client = try api()
+            } else { client = try APIClient(serverURL: link.serverURL) }
+            let result = try await client.redeemPlaylist(token: link.token, deviceName: UIDevice.current.name)
+            if let paired = result.session, session == nil {
+                let newSession = AppSession(serverURL: link.serverURL, token: paired.token, recipientID: paired.recipient.id, recipientName: paired.recipient.name)
+                try sessionStore.save(newSession)
+                session = newSession
+                offline = OfflineLibrary(session: newSession)
+                configureAnalytics()
+            }
+            await refresh()
+            let playlist = try await collection(id: result.collectionId, refresh: true)
+            openedPlaylist = playlist.summary
+        } catch { linkError = (error as? APIError)?.message ?? "The playlist could not be added. Please try the link again." }
+    }
+
     func refresh() async {
         Task { await analytics?.flush() }
         libraryState = .loading
@@ -123,6 +153,7 @@ final class AppModel {
         session = nil
         collections = []
         collectionDetails = [:]
+        openedPlaylist = nil
         offline = OfflineLibrary(session: nil)
     }
 }

@@ -4,9 +4,10 @@ struct LibraryView: View {
     @Bindable var model: AppModel
     @State private var showingSettings = false
     @State private var showingPlayer = false
+    @State private var path: [CollectionSummary] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Group {
                 switch model.libraryState {
                 case .loading where model.collections.isEmpty: ProgressView().controlSize(.large)
@@ -25,6 +26,10 @@ struct LibraryView: View {
             }
             .sheet(isPresented: $showingSettings) { SettingsView(model: model) }
             .fullScreenCover(isPresented: $showingPlayer) { NowPlayingView(model: model) }
+            .onChange(of: model.openedPlaylist) { _, playlist in
+                if let playlist { path = [playlist]; model.openedPlaylist = nil }
+            }
+            .onAppear { if let playlist = model.openedPlaylist { path = [playlist]; model.openedPlaylist = nil } }
         }
     }
 
@@ -43,7 +48,7 @@ struct LibraryView: View {
         }
         .background(Color.museekBackground)
         .refreshable { await model.refresh() }
-        .navigationDestination(for: CollectionSummary.self) { CollectionView(summary: $0, model: model) }
+        .navigationDestination(for: CollectionSummary.self) { CollectionView(summary: $0, model: model).id($0.id) }
     }
 }
 

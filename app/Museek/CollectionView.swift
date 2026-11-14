@@ -7,6 +7,11 @@ struct CollectionView: View {
     @State private var errorMessage: String?
     @State private var showingRemove = false
     @State private var showingPlayer = false
+    @State private var shareURL: URL?
+    @State private var preparingShare = false
+    @State private var shareError: String?
+    @State private var showingShare = false
+    @State private var copiedLink = false
 
     var body: some View {
         Group {
@@ -16,7 +21,34 @@ struct CollectionView: View {
         }
         .background(Color.museekBackground)
         .navigationTitle(summary.name).navigationBarTitleDisplayMode(.inline)
-        .toolbar { if let collection { ToolbarItem(placement: .topBarTrailing) { downloadButton(collection) } } }
+        .toolbar { if let collection {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Share playlist", systemImage: "square.and.arrow.up") { Task { await prepareShare() } }
+                    .disabled(preparingShare).accessibilityIdentifier("playlist.share")
+            }
+            ToolbarItem(placement: .topBarTrailing) { downloadButton(collection) }
+        } }
+        .sheet(isPresented: $showingShare) {
+            NavigationStack {
+                VStack(spacing: 22) {
+                    Image(systemName: "music.note.list").font(.largeTitle).foregroundStyle(Color.museekAccent)
+                    Text(summary.name).font(.title2.bold())
+                    Text("Anyone with this link can add this playlist in Museek. The link works for 24 hours.")
+                        .multilineTextAlignment(.center).foregroundStyle(.secondary)
+                    if let shareURL {
+                        Button(copiedLink ? "Link copied" : "Copy Link", systemImage: copiedLink ? "checkmark" : "link") {
+                            UIPasteboard.general.url = shareURL; copiedLink = true
+                        }.buttonStyle(.borderedProminent).accessibilityIdentifier("playlist.copyLink")
+                        ShareLink(item: shareURL, subject: Text(summary.name)) { Label("Share Link…", systemImage: "square.and.arrow.up") }
+                    }
+                }.padding(28).frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle("Share Playlist").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showingShare = false } } }
+            }.presentationDetents([.medium])
+        }
+        .alert("Couldn’t create a link", isPresented: Binding(get: { shareError != nil }, set: { if !$0 { shareError = nil } })) {
+            Button("OK") { shareError = nil }
+        } message: { Text(shareError ?? "") }
         .safeAreaInset(edge: .bottom, spacing: 0) { if model.player.currentTrack != nil { collectionMiniPlayer } }
         .fullScreenCover(isPresented: $showingPlayer) { NowPlayingView(model: model) }
         .confirmationDialog("Remove download?", isPresented: $showingRemove, titleVisibility: .visible) {
@@ -81,6 +113,15 @@ struct CollectionView: View {
     private func load(refresh: Bool) async {
         do { collection = try await model.collection(id: summary.id, refresh: refresh); errorMessage = nil }
         catch { errorMessage = (error as? APIError)?.message ?? "This collection could not be loaded." }
+    }
+    private func prepareShare() async {
+        preparingShare = true
+        defer { preparingShare = false }
+        do {
+            shareURL = try await model.api().sharePlaylist(id: summary.id)
+            copiedLink = false
+            showingShare = true
+        } catch { shareError = (error as? APIError)?.message ?? "Connect to the server and try again." }
     }
     private func play(_ collection: MusicCollection, index: Int) { Task { if let api = try? model.api() { await model.player.play(collection: collection, index: index, api: api, offline: model.offline) } } }
     private func download(_ collection: MusicCollection) { Task { if let api = try? model.api() { try? await model.offline.download(collection, api: api); await model.refresh() } } }

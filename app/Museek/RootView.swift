@@ -10,6 +10,9 @@ struct RootView: View {
             else { LibraryView(model: model) }
         }
         .animation(.snappy, value: model.session)
+        .alert("Couldn’t add playlist", isPresented: Binding(get: { model.linkError != nil }, set: { if !$0 { model.linkError = nil } })) {
+            Button("OK") { model.linkError = nil }
+        } message: { Text(model.linkError ?? "") }
     }
 }
 

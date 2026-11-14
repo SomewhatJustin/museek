@@ -42,15 +42,17 @@ const inviteLandingHTML = `<!doctype html>
     (() => {
       const status = document.getElementById('status');
       const open = document.getElementById('open');
-      const code = new URLSearchParams(window.location.hash.slice(1)).get('code');
-      if (!code) {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      const code = params.get('code');
+      const playlist = params.get('playlist');
+      if (!code && !playlist) {
         status.textContent = 'This invitation link is incomplete. Ask for a new one.';
         return;
       }
-      const target = new URL('museek://pair');
+      const target = new URL(playlist ? 'museek://playlist' : 'museek://pair');
       const basePath = window.location.pathname.replace(/\/invite\/?$/, '');
       target.searchParams.set('server', window.location.origin + basePath);
-      target.searchParams.set('code', code);
+      target.searchParams.set(playlist ? 'token' : 'code', playlist || code);
       open.href = target.toString();
       open.hidden = false;
       window.setTimeout(() => window.location.assign(target.toString()), 150);

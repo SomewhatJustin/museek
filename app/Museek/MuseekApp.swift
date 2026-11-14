@@ -13,8 +13,8 @@ struct MuseekApp: App {
                     if phase == .active { Task { await model.analytics?.flush() } }
                 }
                 .onOpenURL { url in
-                    guard let link = PairingLink(url: url) else { return }
-                    Task { await model.open(link) }
+                    if let link = PlaylistLink(url: url) { Task { await model.open(link) } }
+                    else if let link = PairingLink(url: url) { Task { await model.open(link) } }
                 }
         }
     }

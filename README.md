@@ -81,6 +81,19 @@ The music directory is mounted read-only. Museek scans it at startup and once pe
 
 ## Invite a listener
 
+In the iPhone app, open a playlist and tap **Share playlist → Copy Link** (or
+**Share Link…**). Anyone with the link can add that playlist in Museek. Links work
+for 24 hours and grant only the selected playlist. An existing listener keeps
+their session and other playlists; a new listener is paired automatically.
+The shared URL opens a browser bridge to the registered `museek://playlist`
+scheme. The secret stays in the URL fragment, outside server access logs.
+New redemptions stop if the sharing device is revoked, its playlist access is
+removed, or the playlist is deleted. Already accepted access remains a normal
+recipient grant and can be removed with `unshare`. The app currently supports
+one server at a time; a link to a different server asks the listener to sign out.
+
+### Owner invitations
+
 The invite command creates the recipient if needed, shares the named collection, and prints a shareable HTTPS invitation link plus a manual fallback code. The invitation can pair multiple devices for 24 hours:
 
 ```sh

@@ -2,6 +2,19 @@ import XCTest
 @testable import Museek
 
 final class MuseekTests: XCTestCase {
+    func testPlaylistLinksValidateTokensAndServerAddresses() throws {
+        let token = String(repeating: "a", count: 43)
+        let valid = URL(string: "museek://playlist?server=https%3A%2F%2Fmusic.example.com%2Fmuseek&token=\(token)")!
+        XCTAssertEqual(PlaylistLink(url: valid)?.serverURL, "https://music.example.com/museek")
+        XCTAssertEqual(PlaylistLink(url: valid)?.token, token)
+        for value in ["museek://playlist?server=http://music.example.com&token=\(token)",
+                      "museek://playlist?server=https://user@music.example.com&token=\(token)",
+                      "museek://playlist?server=https://music.example.com&token=short",
+                      "museek://playlist?server=https://music.example.com&token=\(token)&token=\(token)",
+                      "museek://playlist/extra?server=https://music.example.com&token=\(token)"] {
+            XCTAssertNil(PlaylistLink(url: URL(string: value)!))
+        }
+    }
     func testPlaylistNotesDecodeAndSurviveOfflineEncoding() throws {
         let old = Data(#"{"id":"a","collectionId":"one","title":"Song"}"#.utf8)
         XCTAssertNil(try JSONDecoder().decode(MusicTrack.self, from: old).noteText)

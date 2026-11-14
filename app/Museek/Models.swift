@@ -121,3 +121,33 @@ extension AppSession {
         return current.scheme == invited.scheme && current.host == invited.host
     }
 }
+
+struct PlaylistLink: Equatable, Sendable {
+    let serverURL: String
+    let token: String
+
+    init?(url: URL) {
+        guard url.scheme?.lowercased() == "museek", url.host?.lowercased() == "playlist",
+              url.path.isEmpty || url.path == "/",
+              let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let items = parts.queryItems,
+              items.filter({ $0.name == "server" }).count == 1,
+              items.filter({ $0.name == "token" }).count == 1,
+              let server = items.first(where: { $0.name == "server" })?.value,
+              let normalized = try? APIClient.normalizedURL(server),
+              let token = items.first(where: { $0.name == "token" })?.value,
+              token.range(of: "^[A-Za-z0-9_-]{43}$", options: .regularExpression) != nil else { return nil }
+        self.serverURL = normalized.absoluteString
+        self.token = token
+    }
+}
+
+struct PlaylistRedemption: Decodable, Sendable {
+    struct Session: Decodable, Sendable {
+        struct Recipient: Decodable, Sendable { let id: String; let name: String }
+        let token: String
+        let recipient: Recipient
+    }
+    let collectionId: String
+    let session: Session?
+}

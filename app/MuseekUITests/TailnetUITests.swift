@@ -1,6 +1,30 @@
 import XCTest
 
 final class TailnetUITests: XCTestCase {
+    @MainActor func testPlaylistShareExposesCopyLink() {
+        let app = XCUIApplication()
+        continueAfterFailure = false
+        app.launchEnvironment["MUSEEK_UI_TEST_RESET_SESSION"] = "1"
+        app.launchEnvironment["MUSEEK_UI_TEST_SCENARIO"] = "success"
+        app.launch()
+        XCTAssertTrue(app.buttons["tailnet.join"].waitForExistence(timeout: 8))
+        app.buttons["tailnet.join"].tap()
+        let playlist = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Joined fixture collection")).firstMatch
+        XCTAssertTrue(playlist.waitForExistence(timeout: 8))
+        playlist.tap()
+        let share = app.buttons["playlist.share"]
+        XCTAssertTrue(share.waitForExistence(timeout: 8))
+        share.tap()
+        let copy = app.buttons["playlist.copyLink"]
+        XCTAssertTrue(copy.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["Anyone with this link can add this playlist in Museek. The link works for 24 hours."].exists)
+        copy.tap()
+        XCTAssertEqual(copy.label, "Link copied")
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Share playlist and copy URL"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+    }
     @MainActor func testNotesReadWithoutChangingPlayback() {
         let app = XCUIApplication()
         continueAfterFailure = false

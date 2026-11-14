@@ -62,6 +62,8 @@ func (a *API) Handler() http.Handler {
 	mux.HandleFunc("GET /healthz", a.health)
 	mux.HandleFunc("GET /invite", a.inviteLanding)
 	mux.HandleFunc("POST /v1/pair", a.pair)
+	mux.HandleFunc("POST /v1/playlist-links/redeem", a.redeemPlaylistLink)
+	mux.Handle("POST /v1/collections/{id}/share", a.requireSession(http.HandlerFunc(a.sharePlaylist)))
 	mux.Handle("GET /v1/collections", a.requireSession(http.HandlerFunc(a.listCollections)))
 	mux.Handle("GET /v1/collections/{id}", a.requireSession(http.HandlerFunc(a.collectionDetail)))
 	mux.Handle("POST /v1/collections/{id}/listens", a.requireSession(http.HandlerFunc(a.recordListen)))

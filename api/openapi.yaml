@@ -6,6 +6,65 @@ info:
 servers:
   - url: https://music.example.com
 paths:
+  /v1/collections/{id}/share:
+    post:
+      operationId: sharePlaylist
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      description: Creates a 24-hour link granting only a playlist the authenticated listener can access. The secret is in the URL fragment.
+      responses:
+        "201":
+          description: A shareable HTTPS browser bridge to museek://playlist.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, expiresAt]
+                properties:
+                  url: { type: string, format: uri }
+                  expiresAt: { type: string, format: date-time }
+        "401": { description: Device session required. }
+        "404": { description: Playlist unavailable to this listener. }
+  /v1/playlist-links/redeem:
+    post:
+      operationId: redeemPlaylistLink
+      security: [{ bearerAuth: [] }, {}]
+      description: >-
+        Adds the playlist grant to the authenticated recipient without replacing
+        their session or existing grants. Without a bearer, creates a new listener
+        and device session with only this playlist. A supplied invalid bearer
+        fails instead of pairing anonymously. The issuer device and its playlist
+        grant must still be active. Repeated authenticated redemptions are idempotent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [token]
+              properties:
+                token: { type: string, minLength: 43, maxLength: 43 }
+                deviceName: { type: string, maxLength: 200 }
+      responses:
+        "200":
+          description: Playlist added; session is present only for a new listener.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [collectionId]
+                properties:
+                  collectionId: { type: string }
+                  session: { $ref: "#/components/schemas/PairResult" }
+        "400": { description: Invalid request. }
+        "401": { description: Supplied device session is invalid or revoked. }
+        "404": { description: Invitation expired or unavailable. }
+        "429": { description: More than five redemptions per client IP in five minutes. }
   /v1/server:
     servers:
       - url: https://elitedesk-1.tail6900fe.ts.net:10002

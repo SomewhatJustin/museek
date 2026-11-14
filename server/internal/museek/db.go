@@ -118,6 +118,12 @@ CREATE TABLE IF NOT EXISTS device_sessions (
   revoked_at INTEGER
 );
 CREATE INDEX IF NOT EXISTS sessions_token_idx ON device_sessions(token_hash);
+CREATE TABLE IF NOT EXISTS playlist_links (
+  token_hash TEXT PRIMARY KEY,
+  collection_id TEXT NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+  session_id TEXT NOT NULL REFERENCES device_sessions(id) ON DELETE CASCADE,
+  expires_at INTEGER NOT NULL
+);
 `
 	if _, err := s.db.ExecContext(ctx, schema); err != nil {
 		return fmt.Errorf("migrate database: %w", err)

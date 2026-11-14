@@ -42,6 +42,14 @@ final class UITestTransport: URLProtocol, @unchecked Sendable {
             where request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer":
             status = 200
             body = #"{"id":"ui-fixture-collection","name":"Joined fixture collection","trackCount":2,"tracks":[{"id":"song-a","collectionId":"ui-fixture-collection","title":"Playing song","playCount":12,"note":"The playing song’s note."},{"id":"song-b","collectionId":"ui-fixture-collection","title":"Another song","note":"A different song’s note."}]}"#
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/collections/ui-fixture-collection/share", "POST", "success")
+            where request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer":
+            status = 201
+            body = #"{"url":"https://music.example.com/museek/invite#playlist=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}"#
+        case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/playlist-links/redeem", "POST", "success")
+            where request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer":
+            status = 200
+            body = #"{"collectionId":"ui-fixture-collection"}"#
         case ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tracks/song-a/play-url", "POST", "success"),
              ("https://elitedesk-1.tail6900fe.ts.net:10002/v1/tracks/song-b/play-url", "POST", "success"):
             guard request.value(forHTTPHeaderField: "Authorization") == "Bearer ui-fixture-bearer",
@@ -105,7 +113,9 @@ actor APIClient {
         if !value.contains("://") { value = "https://" + value }
         guard var components = URLComponents(string: value),
               let scheme = components.scheme?.lowercased(), ["https", "http"].contains(scheme),
-              let host = components.host, !host.isEmpty else {
+              let host = components.host, !host.isEmpty,
+              components.user == nil, components.password == nil,
+              components.query == nil, components.fragment == nil else {
             throw APIError(message: "Enter a valid server address.", statusCode: nil)
         }
         if scheme == "http", !["localhost", "127.0.0.1", "::1"].contains(host) {
@@ -143,6 +153,16 @@ actor APIClient {
     func collections() async throws -> [CollectionSummary] {
         struct Response: Decodable { let collections: [CollectionSummary] }
         return try await send("/v1/collections", as: Response.self).collections
+    }
+
+    func sharePlaylist(id: String) async throws -> URL {
+        struct Response: Decodable { let url: URL }
+        return try await send("/v1/collections/\(encoded(id))/share", method: "POST", as: Response.self, expected: 201).url
+    }
+
+    func redeemPlaylist(token: String, deviceName: String) async throws -> PlaylistRedemption {
+        struct Request: Encodable { let token: String; let deviceName: String }
+        return try await send("/v1/playlist-links/redeem", method: "POST", body: Request(token: token, deviceName: deviceName), expected: 200)
     }
 
     func collection(id: String) async throws -> MusicCollection {

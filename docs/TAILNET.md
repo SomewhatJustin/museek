@@ -57,7 +57,18 @@ cannot join. Access logs omit headers, request bodies and bearer tokens.
 6. Build/upload native TestFlight using the existing release workflow only after
    review. This feature does not change signing or release settings.
 
-## Tests
+## Family server deployment
+
+On November 14, 2026, discovery returned 404 because private Serve port 10002
+still targeted the public listener at 18080 and the discovery overlay was absent.
+The host now includes `/home/justin/museek/tailnet.compose.yaml` alongside
+`compose.yaml` and `manage.compose.yaml`, binding 18081 to loopback and mapping
+the owner's exact Tailscale identity to the existing `Listener` recipient.
+Private Serve port 10002 targets 18081. Preserve all three Compose files on
+future updates. Private discovery returns 200; the public `/museek/v1/server`
+remains 404. This setup grants no additional playlists.
+
+## Regression tests
 
 ```sh
 cd server && go test -race ./...
