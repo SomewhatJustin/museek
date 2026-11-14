@@ -1,6 +1,41 @@
 import XCTest
 
 final class TailnetUITests: XCTestCase {
+    @MainActor func testSwipeDownDismissesNowPlayingToPlaylist() {
+        let app = XCUIApplication()
+        continueAfterFailure = false
+        app.launchEnvironment["MUSEEK_UI_TEST_RESET_SESSION"] = "1"
+        app.launchEnvironment["MUSEEK_UI_TEST_SCENARIO"] = "success"
+        app.launch()
+        XCTAssertTrue(app.buttons["tailnet.join"].waitForExistence(timeout: 8))
+        app.buttons["tailnet.join"].tap()
+        let playlist = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Joined fixture collection")).firstMatch
+        XCTAssertTrue(playlist.waitForExistence(timeout: 8))
+        playlist.tap()
+        app.buttons["Play Playing song"].tap()
+        let openPlayer = app.buttons["Open Now Playing"]
+        XCTAssertTrue(openPlayer.waitForExistence(timeout: 8))
+        openPlayer.tap()
+        let title = app.staticTexts["nowPlaying.title"]
+        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9)))
+        XCTAssertTrue(title.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["playlist.share"].isHittable)
+        XCTAssertTrue(openPlayer.isHittable)
+
+        // Open from the library: dismissal must navigate to the playing playlist.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(playlist.waitForExistence(timeout: 5))
+        app.staticTexts["Playing song"].tap()
+        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9)))
+        XCTAssertTrue(title.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["playlist.share"].waitForExistence(timeout: 5))
+        XCTAssertTrue(openPlayer.isHittable)
+    }
+
     @MainActor func testPlaylistShareExposesCopyLink() {
         let app = XCUIApplication()
         continueAfterFailure = false

@@ -50,7 +50,9 @@ struct CollectionView: View {
             Button("OK") { shareError = nil }
         } message: { Text(shareError ?? "") }
         .safeAreaInset(edge: .bottom, spacing: 0) { if model.player.currentTrack != nil { collectionMiniPlayer } }
-        .fullScreenCover(isPresented: $showingPlayer) { NowPlayingView(model: model) }
+        .sheet(isPresented: $showingPlayer, onDismiss: {
+            model.openedPlaylist = model.player.collection?.summary
+        }) { NowPlayingView(model: model) }
         .confirmationDialog("Remove download?", isPresented: $showingRemove, titleVisibility: .visible) {
             Button("Remove Download", role: .destructive) { if let collection { try? model.offline.remove(collection.id); Task { await model.refresh() } } }
         } message: { Text("\(summary.name) will need an internet connection to play again.") }
@@ -162,7 +164,7 @@ private struct TrackRow: View {
                 .popover(isPresented: $showingNote, attachmentAnchor: .rect(.bounds)) {
                     SongNotePopover(track: track, note: note)
                         .presentationCompactAdaptation(.popover)
-                        .presentationBackground(Color.songNotePaper)
+                        .presentationBackground(.background)
                 }
             }
             if track.duration > 0 {

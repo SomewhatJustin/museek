@@ -25,9 +25,14 @@ struct LibraryView: View {
                 if model.player.currentTrack != nil { MiniPlayer(model: model, showingPlayer: $showingPlayer) }
             }
             .sheet(isPresented: $showingSettings) { SettingsView(model: model) }
-            .fullScreenCover(isPresented: $showingPlayer) { NowPlayingView(model: model) }
+            .sheet(isPresented: $showingPlayer, onDismiss: {
+                if let playlist = model.player.collection?.summary { path = [playlist] }
+            }) { NowPlayingView(model: model) }
             .onChange(of: model.openedPlaylist) { _, playlist in
-                if let playlist { path = [playlist]; model.openedPlaylist = nil }
+                if let playlist {
+                    if path.last?.id != playlist.id { path = [playlist] }
+                    model.openedPlaylist = nil
+                }
             }
             .onAppear { if let playlist = model.openedPlaylist { path = [playlist]; model.openedPlaylist = nil } }
         }

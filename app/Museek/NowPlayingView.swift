@@ -7,35 +7,37 @@ struct NowPlayingView: View {
 
     var body: some View {
         NavigationStack {
-            GeometryReader { proxy in
-                ScrollView {
-                    VStack(spacing: 0) {
-                        ArtworkView(id: model.player.currentTrack?.artworkID ?? model.player.collection?.artworkID, model: model, cornerRadius: 28)
-                            .frame(width: min(proxy.size.width - 48, 390), height: min(proxy.size.width - 48, 390))
-                            .shadow(color: .black.opacity(0.22), radius: 28, y: 16).padding(.top, 18)
-                        Text(model.player.currentTrack?.title ?? "Nothing Playing")
-                            .accessibilityIdentifier("nowPlaying.title")
-                            .font(.title2.bold()).multilineTextAlignment(.center).lineLimit(2).padding(.top, 34)
-                        Text(artist).font(.title3).foregroundStyle(.secondary).lineLimit(1).padding(.top, 7)
-                        progress.padding(.top, 28)
-                        controls.padding(.top, 18)
-                        if let track = model.player.currentTrack, let note = track.noteText {
-                            SongNoteCard(track: track, note: note)
-                                .padding(22)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.songNotePaper, in: RoundedRectangle(cornerRadius: 20))
-                                .padding(.top, 28)
-                        }
-                        if let error = model.player.errorMessage {
-                            Label(error, systemImage: "exclamationmark.circle.fill").font(.subheadline).foregroundStyle(.red).padding(.top, 28).onTapGesture { model.player.dismissError() }
-                        }
-                    }.padding(.horizontal, 24).padding(.bottom, 40).frame(maxWidth: .infinity)
-                }
+            ScrollView {
+                VStack(spacing: 0) {
+                    ArtworkView(id: model.player.currentTrack?.artworkID ?? model.player.collection?.artworkID, model: model, cornerRadius: 28)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(maxWidth: 390)
+                        .shadow(color: .black.opacity(0.22), radius: 28, y: 16).padding(.top, 18)
+                    Text(model.player.currentTrack?.title ?? "Nothing Playing")
+                        .accessibilityIdentifier("nowPlaying.title")
+                        .font(.title2.bold()).multilineTextAlignment(.center).lineLimit(2).padding(.top, 34)
+                    Text(artist).font(.title3).foregroundStyle(.secondary).lineLimit(1).padding(.top, 7)
+                    progress.padding(.top, 28)
+                    controls.padding(.top, 18)
+                    if let track = model.player.currentTrack, let note = track.noteText {
+                        SongNoteCard(track: track, note: note)
+                            .padding(22)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(.background, in: RoundedRectangle(cornerRadius: 18))
+                            .padding(.top, 28)
+                    }
+                    if let error = model.player.errorMessage {
+                        Label(error, systemImage: "exclamationmark.circle.fill").font(.subheadline).foregroundStyle(.red).padding(.top, 28).onTapGesture { model.player.dismissError() }
+                    }
+                }.padding(.horizontal, 24).padding(.bottom, 40).frame(maxWidth: .infinity)
             }
             .background(Color.museekBackground)
             .navigationTitle("Now Playing").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .topBarLeading) { Button("Close", systemImage: "chevron.down") { dismiss() }.labelStyle(.iconOnly) } }
         }
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
+        .presentationContentInteraction(.resizes)
     }
 
     private var artist: String {
@@ -73,15 +75,15 @@ struct SongNoteCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("A NOTE FOR YOU", systemImage: "note.text")
-                .font(.caption.weight(.medium)).tracking(1.2).foregroundStyle(Color.museekAccent)
+            Label("A note for you", systemImage: "note.text")
+                .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 4) {
                 Text(track.title).font(.subheadline.weight(.semibold))
                 if !track.artist.isEmpty { Text(track.artist).font(.caption).foregroundStyle(.secondary) }
             }
             Divider()
-            Text(note).font(.system(.title3, design: .serif))
-                .lineSpacing(5).fixedSize(horizontal: false, vertical: true)
+            Text(note).font(.body).foregroundStyle(.primary)
+                .lineSpacing(4).fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,16 +119,6 @@ struct SongNotePopover: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .frame(width: 300)
-    }
-}
-
-extension Color {
-    static var songNotePaper: Color {
-        Color(uiColor: UIColor { traits in
-            traits.userInterfaceStyle == .dark
-                ? UIColor(red: 0.20, green: 0.21, blue: 0.17, alpha: 1)
-                : UIColor(red: 0.95, green: 0.93, blue: 0.87, alpha: 1)
-        })
     }
 }
 
